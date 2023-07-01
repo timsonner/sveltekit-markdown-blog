@@ -26,7 +26,7 @@ published: true
 -script=\<category or path to script>: Run script  
 --script-help: Help on Script  
 -Pn: Disable ping scan  
--iR \<int>: Random IP 
+-iR \<int>: Random IP  
 --script-updatedb: Update scripts.db  
 --script-help "<string>": Script help  
   -f: Fragment packets  
@@ -41,13 +41,13 @@ published: true
 ## Scan types  
 
 -sV: Identify services/versions scan.  
--sS: Syn "Half-open" aka "Stealth" scan 
--sU: UDP scan
--sT: TCP Connect scan
+-sS: Syn "Half-open" aka "Stealth" scan   
+-sU: UDP scan  
+-sT: TCP Connect scan  
 -sn: Disable port scan aka "Ping sweep"  
 -sL: Test scan "List" targets  
--sN: TCP Null (All flags set to null)
--sF: TCP FIN (FIN flag set to 1) 
+-sN: TCP Null (All flags set to null)  
+-sF: TCP FIN (FIN flag set to 1)  
 -sX: TCP Xmas (URG, PUSH, FIN flags set to 1)  
 -PS: TCP SYN Ping (SYN flag set tp 1)  
 -PA: TCP ACK Ping (ACK flag set to 1)  
