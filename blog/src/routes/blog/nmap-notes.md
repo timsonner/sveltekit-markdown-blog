@@ -6,12 +6,6 @@ date: '2023-06-29'
 published: true
 ---
 
-<!-- <script>
-  import Counter from '$lib/components/Counter.svelte'
-</script> -->
-
- // nmap-notes.md
-
 # Nmap notes  
 
 ## Switches  
@@ -36,7 +30,7 @@ published: true
 --badsum: Firewall check  
 -n: No DNS resolve  
 --dns-servers: Specify DNS servers  
--R: reverse-DNS lookup for all hosts (live/dead)
+-R: reverse-DNS lookup for all hosts (live/dead)  
 
 ## Scan types  
 
@@ -62,32 +56,32 @@ published: true
 -oG: Grepable  
 -oN: Normal  
 -oX: XML  
--oS: Skript kitty
+-oS: Skript kitty  
 
 ## Examples  
 
     nmap -v -A scanme.nmap.org  
     nmap -v -sn 192.168.0.0/16 10.0.0.0/8  
     nmap -v -iR 10000 -Pn -p 80  
-    nmap -sT --scan-delay 10s nmap.scanme.org
+    nmap -sT --scan-delay 10s nmap.scanme.org  
     nmap -sL -n 10.11.12.13/29  
-    nmap -PR -sn 10.11.12.13/29 
+    nmap -PR -sn 10.11.12.13/29  
     nmap localhost -p 1024-65535  
-    nmap -T4 10.10.0-255.1-12
+    nmap -T4 10.10.0-255.1-12  
     nmap script=vuln  
     nmap -R --dns-servers 192.168.6.1  
-    nmap -sV -vv --script=vuln $IP
+    nmap -sV -vv --script=vuln $IP  
 
--PS80,443,8080
+-PS80,443,8080  
     
 Script Help:  
-nmap --script-help "smb-* and discovery" 
+nmap --script-help "smb-* and discovery"  
 
-Find script:
-ls -l /usr/share/nmap/scripts/*dns* 
+Find script:  
+ls -l /usr/share/nmap/scripts/*dns*  
 
-Download script:
-sudo wget -O /usr/share/nmap/scripts/<script-name>.nse https://svn.nmap.org/nmap/scripts/<script-name>.nse
+Download script:  
+sudo wget -O /usr/share/nmap/scripts/<script-name>.nse https://svn.nmap.org/nmap/scripts/<script-name>.nse  
 
-<https://www.rfc-editor.org/rfc/rfc9293>
+<https://www.rfc-editor.org/rfc/rfc9293>  
 

