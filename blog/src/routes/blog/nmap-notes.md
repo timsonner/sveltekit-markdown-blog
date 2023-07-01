@@ -14,23 +14,24 @@ published: true
 -A: Aggressive  
 -v: Verbose  
 -vv: Double verbose  
--T\<int>: Timing  
--p \<int>: Port  
+-T<int>: Timing  
+-p <int>: Port  
 -p-: All ports  
--script=\<category or path to script>: Run script  
+-script=<category or path to script>: Run script  
 --script-help: Help on Script  
 -Pn: Disable ping scan  
--iR \<int>: Random IP  
+-iR <int>: Random IP  
 --script-updatedb: Update scripts.db  
 --script-help "<string>": Script help  
   -f: Fragment packets  
---mtu \<int>: Maximum transmission unit size  
+--mtu <int>: Maximum transmission unit size  
 --data-length: Append random data to packet  
 --scan-delay <time>ms: Delay between packets  
 --badsum: Firewall check  
 -n: No DNS resolve  
 --dns-servers: Specify DNS servers  
 -R: reverse-DNS lookup for all hosts (live/dead)  
+ 
 
 ## Scan types  
 
@@ -59,18 +60,19 @@ published: true
 -oS: Skript kitty  
 
 ## Examples  
-
-    nmap -v -A scanme.nmap.org  
-    nmap -v -sn 192.168.0.0/16 10.0.0.0/8  
-    nmap -v -iR 10000 -Pn -p 80  
-    nmap -sT --scan-delay 10s nmap.scanme.org  
-    nmap -sL -n 10.11.12.13/29  
-    nmap -PR -sn 10.11.12.13/29  
-    nmap localhost -p 1024-65535  
-    nmap -T4 10.10.0-255.1-12  
-    nmap script=vuln  
-    nmap -R --dns-servers 192.168.6.1  
-    nmap -sV -vv --script=vuln $IP  
+```  
+nmap -v -A scanme.nmap.org  
+nmap -v -sn 192.168.0.0/16 10.0.0.0/8  
+nmap -v -iR 10000 -Pn -p 80  
+nmap -sT --scan-delay 10s nmap.scanme.org  
+nmap -sL -n 10.11.12.13/29  
+nmap -PR -sn 10.11.12.13/29  
+nmap localhost -p 1024-65535  
+nmap -T4 10.10.0-255.1-12  
+nmap script=vuln  
+nmap -R --dns-servers 192.168.6.1  
+nmap -sV -vv --script=vuln $IP  
+```  
 
 -PS80,443,8080  
     
