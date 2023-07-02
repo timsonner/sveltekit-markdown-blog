@@ -5,8 +5,8 @@ This blog is based on an excellent <a href=
 
 <style>
     footer {
-        padding-left: 30px;
-        padding-right: 30px;
+        padding-left: 1rem;
+        padding-right: 1rem;
         padding-bottom: 10px;
         padding-top: 10px;
         background-color: lightgrey;

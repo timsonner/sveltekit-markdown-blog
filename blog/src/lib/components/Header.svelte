@@ -1,7 +1,6 @@
 <!-- Header.svelte -->
 <header>
     <a href="/">Tim Sonner</a>
-  
     <nav>
       <ul>
         <li>
