@@ -4,12 +4,20 @@ body {
     background: #eee;
     color: #333;
     font-family: sans-serif;
+	align-items: start;
   }
   
   main {
     padding: 1rem;
     margin: 2rem auto;
     max-width: 40rem;
+  }
+
+  blockquote{
+	width:60%;
+	padding: 1em;
+	border-left:6px solid rgba(5, 77, 121, 1.0);
+	background:rgb(26, 28, 29);
   }
 
   /*
