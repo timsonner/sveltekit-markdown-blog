@@ -1,4 +1,5 @@
 <!-- src/routes/blog/+page.svelte -->
+<!-- Main blog page user navigates to -->
 <script>
     export let data
     </script>
@@ -8,6 +9,7 @@
     <ul>
       {#each data.posts as post}
         <li>
+          <img src={post.meta.hero} alt="">
           <h2>
             <a href={post.path}>
               {post.meta.title}

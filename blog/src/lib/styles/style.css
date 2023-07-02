@@ -10,7 +10,13 @@ body {
   main {
     padding: 1rem;
     margin: 2rem auto;
-    max-width: 40rem;
+    /* max-width: 40rem; */
+  }
+
+  img {
+	max-width: 640px;
+	max-height: 480px;
+
   }
 
   blockquote{

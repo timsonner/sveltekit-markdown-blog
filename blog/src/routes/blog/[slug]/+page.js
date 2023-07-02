@@ -1,13 +1,14 @@
 // src/routes/blog/[slug]/+page.js
+// This function loads the file from disk, exports 
 export async function load({ params }){
     const post = await import(`../${params.slug}.md`)
-    const { title, date } = post.metadata
+    const { title, date, hero } = post.metadata
     const content = post.default
-  
     return {
       content,
       title,
       date,
+      hero,
     }
   }
 

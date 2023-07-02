@@ -1,4 +1,4 @@
 <footer>
 This blog is based on an excellent <a href=
-"https://joshcollinsworth.com/blog/build-static-sveltekit-markdown-blog">tutorial</a> by Josh Collinsworth. This site is proudly hosted on <a href="https://vercel.com">Vercel</a>.
+"https://joshcollinsworth.com/blog/build-static-sveltekit-markdown-blog">tutorial</a> by Josh Collinsworth. This site is proudly deployed on <a href="https://vercel.com">Vercel</a>.
 </footer>

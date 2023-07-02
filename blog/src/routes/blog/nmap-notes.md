@@ -1,12 +1,11 @@
 ---
-title: 'nmap cheatsheet'
+title: 'Nmap Cheatsheet'
 description: "Example syntax and command line argument definitions for the amazing nmap scanner."
 author: 'Tim Sonner'
 date: '2023-06-29'
+hero: '/hero-image-1240x620.jpg'
 published: true
 ---
-
-# Nmap notes  
 
 ## Switches  
 
