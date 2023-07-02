@@ -20,7 +20,7 @@
   <style>
     header {
       padding: 1rem;
-      background: lightskyblue;
+      background: lightgray;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;

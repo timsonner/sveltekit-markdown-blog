@@ -3,7 +3,8 @@
 <script>
     export let data
     </script>
-    
+
+<body>
     <h1>Blog</h1>
       
     <ul>
@@ -19,3 +20,24 @@
         </li>
       {/each}
     </ul>
+</body>
+
+<style>
+  h1 {
+    padding: 1rem;
+  }
+
+  img {
+    padding: 0px;
+    max-width: 100%;
+  }
+
+  li {
+    border: solid 2px lightgray;
+    /* padding-bottom: 2rem; */
+    margin-bottom: 2rem;
+    max-width: 50%;
+    list-style: none;
+    padding: 3rem;
+  }
+</style>
