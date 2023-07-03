@@ -7,6 +7,8 @@ hero: '/thm-blue/thm-blue-hero.png'
 published: true
 ---
 
+![](/thm-blue/thm-blue-hero.png)  
+
 ## Recon  
 
 **Set a terminal environmental variable for target IP address**  

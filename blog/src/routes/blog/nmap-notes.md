@@ -7,6 +7,8 @@ hero: '/hero-image-1240x620.jpg'
 published: true
 ---
 
+![](/hero-image-1240x620.jpg)  
+
 ## Switches  
 
 -O: Detect operating system  

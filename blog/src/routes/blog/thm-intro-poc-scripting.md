@@ -7,6 +7,8 @@ hero: '/thm-intro-poc-script/thm-intro-poc-script-hero.png'
 published: true
 ---
 
+![](/thm-intro-poc-script/thm-intro-poc-script-hero.png)  
+
 https://tryhackme.com/room/intropocscripting  
 
 ### **Recon** 
