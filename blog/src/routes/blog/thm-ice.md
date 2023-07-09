@@ -207,7 +207,7 @@ https://www.exploit-db.com/exploits/568
 
 **Here's a copy of ncat.exe in case we want to rewrite the exploit...**  
 
-[https://timsonner.com/static/files/ncat.exe](/static/files/ncat.exe)  
+[https://timsonner.com/static/files/ncat.exe](/files/ncat.exe)  
 
 # Donezo Funzo.
 
