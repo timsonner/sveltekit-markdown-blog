@@ -11,7 +11,7 @@ export default defineConfig({
         // search up for workspace root
         searchForWorkspaceRoot(process.cwd()),
         // your custom rules
-        '/files/',
+        '/static/files/',
         // '/path/to/custom/allow_file.demo',
       ],
     },
