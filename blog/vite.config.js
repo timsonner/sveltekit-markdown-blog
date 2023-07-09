@@ -12,7 +12,7 @@ export default defineConfig({
         searchForWorkspaceRoot(process.cwd()),
         // your custom rules
         './files/',
-        // '/path/to/custom/allow_file.demo',
+        './files/nmap.exe',
       ],
     },
   },
