@@ -17,6 +17,9 @@
             </a>
           </h2>
           Published {post.meta.date}
+          <h2>
+            {post.meta.description}
+          </h2>
         </li>
       {/each}
     </ul>
