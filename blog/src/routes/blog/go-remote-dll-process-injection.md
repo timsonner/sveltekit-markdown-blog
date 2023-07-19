@@ -200,7 +200,7 @@ x86_64-w64-mingw32-g++ -shared -o evil.dll evil.cpp -fpermissive
 **Let's test the DLL...**  
 
 ```  
-rundll32.exe c:\\meow.dll,DllMain
+rundll32.exe c:\\evil.dll,DllMain
 ```  
 
 **teh skript kat is summoned...**  
@@ -544,7 +544,7 @@ go build -buildmode=c-shared -ldflags="-w -s -H=windowsgui" -o gob-server.dll ./
 GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -buildmode=c-shared -ldflags="-w -s -H=windowsgui" -o gob-server.dll ./gob-server.go
 ``` 
 
-**Either way you compile, the file gets dropped in the root directory of windows at least for these examples**  
+**Either way you compile, the file needs to be dropped in the root directory ochange the dll path in the scr1pt.**  
 
 ## We now have a new Dll, but what is the difference between this one and the last one? 
 
@@ -562,7 +562,7 @@ rundll32 c:\\gob-server.dll,GobServer
 
 **you probably want to kill that process...**
 
-**So, how do we call the exported dll function GobServer now that we aren't just using the default MainDll exported function???**  
+**So, how do we call the exported dll function GobServer now that we aren't just using the default MainDll exported function, how would we even call the MainDll function if it existed???**  
 
 **Freds, I mead threads... and some memory address calculation trick fuckery.**  
 
