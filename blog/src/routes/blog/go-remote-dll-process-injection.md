@@ -456,9 +456,7 @@ go run ./example-3.go <pid>
 
 ## Sweet! We have consistent results.  
 
-## Ok Tim, thats kewl and all, we can make skript cats appear on the screen, but what about something useful, how bout a dll that actually does something useful, like a simple gob rat example.  
-
-**I gotchu. I created a gob rat POC a few months ago! Lets try that out...**  
+## Ok Tim, thats kewl and all, we can make skript cats appear on the screen, but what about something useful, like a simple gob rat POC.  
 
 **gob is a GoLang library to send encrypted data over tcp/ip, its not amazingly well known and has tremendous potential...**  
 
@@ -550,7 +548,7 @@ GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -buil
 
 ## We now have a new Dll, but what is the difference between this one and the last one? 
 
-**The main difference besides language (C++ vs Go) is that the previous example has no export statements for funtions. You may have noticed an error when you ran rundll32 against it.**  
+**The main difference besides language (C++ vs Go) is that the previous example (evil.dll) has no export statements for functions. You may have noticed an error when you ran rundll32 against it.**  
 
 ## Let's try running rundll32 against our new dll. We have an exported function named GobServer.  
 
@@ -742,7 +740,7 @@ func main() {
 }
 ```  
 
-## Basically we had to mimic the structure of the dll on disk. We get the dll base address, we get the exported function's address (we actually called this by name, which is handy) and were able to calculate the offset. Once we know the offset, we can access the function by adding the offset to the base address of our remote buffer. Just need to create a new thread and point it at the function. EZ, right.  
+## Basically we had to mimic the structure of the dll on disk. We get the dll base address, we get the exported function's address (we actually called this by name, which is handy) and were able to calculate the offset. Once we know the offset, we can access the function in memory by adding the offset to the base address of our remote buffer. We create a new thread and point it at our calculated address. EZ, right.  
 
 
 Here's our fully injected notepad.exe running our gob server.  
