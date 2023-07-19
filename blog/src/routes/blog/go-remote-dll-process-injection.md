@@ -146,12 +146,12 @@ gcc example-1.c -o example-1.exe
 
 ## Ok, cool. We know that we can make notepad run a reverse tcp shell payload by injecting shellcode. But this post is on injecting DLLs, wh4t the h3ck Tims, lets get this going, why you wasting my tim3s, could be doing something kewl right now...  
 
-**This second example is going to teach us how to inject a DLL into memory using C++...**  
+**This second example is going to teach us how to inject a DLL into a process's memory using C++**  
 
 ## Grab the code from teh cocomelonc...  
 https://cocomelonc.github.io/tutorial/2021/09/20/malware-injection-2.html  
 
-**We're going to be messing with C++ now... c prus plus, wtf's t1m, I thought we wuz gonna learn teh G0L4ngz...**  
+**c prus plus, wtf's t1m, I thought we wuz gonna learn teh G0L4ngz...**  
 
 ## The first piece of kit that we need is a proper DLL. I like this one a lot, its soooo cute! uWu  
 
