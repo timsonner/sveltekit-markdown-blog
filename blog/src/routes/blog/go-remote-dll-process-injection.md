@@ -142,18 +142,16 @@ gcc example-1.c -o example-1.exe
 
 ![](/go-remote-dll-process-injection/example-1-netstat.png)  
 
-## As you can see, our l33t haxor script injected itself into the target process and the shellcode was executed. Notepad is trying to reach out to a IP on the interweb, the POC script worked... So, what does this teach us?  
-
-**You can search the web for these calls to learn more about their parameters, I'm not going over that here, we don't know anything and we just run teh cod3s, remember?**  
+## As you can see, our l33t haxor script injected itself into the target process and the shellcode was executed. Notepad is trying to reach out to a IP on the interweb, the POC script worked...  
 
 ## Ok, cool. We know that we can make notepad run a reverse tcp shell payload by injecting shellcode. But this post is on injecting DLLs, wh4t the h3ck Tims, lets get this going, why you wasting my tim3s, could be doing something kewl right now...  
 
-**This second example is going to teach us how to inject a DLL into memory...**  
+**This second example is going to teach us how to inject a DLL into memory using C++...**  
 
 ## Grab the code from teh cocomelonc...  
 https://cocomelonc.github.io/tutorial/2021/09/20/malware-injection-2.html  
 
-**We're going to be messing with C++ now... wtf's t1m, I thought we wuz gonna learn teh G0L4ngz...**  
+**We're going to be messing with C++ now... c prus plus, wtf's t1m, I thought we wuz gonna learn teh G0L4ngz...**  
 
 ## The first piece of kit that we need is a proper DLL. I like this one a lot, its soooo cute! uWu  
 
@@ -205,9 +203,9 @@ x86_64-w64-mingw32-g++ -shared -o evil.dll evil.cpp -fpermissive
 rundll32.exe c:\\meow.dll,DllMain
 ```  
 
-**teh skript kat**  
+**teh skript kat is summoned...**  
 
-## Ok, no more distractions on to the main C++ code...  
+## Ok, on to the main C++ code...  
 
   - example-2.cpp
 ```cpp  
@@ -266,7 +264,7 @@ x86_64-w64-mingw32-gcc -O2 example-2.cpp -o example-2.exe -mconsole -s -ffunctio
 
 ## WHut?!!
 
-**They did it againz! Its OK, Timmys gotchu, bruv...**  
+**hey, They did it againz! Its OK, Timmys gotchu, bruv...**  
 
 ```cpp  
 #include <stdio.h>
