@@ -189,15 +189,15 @@ BOOL APIENTRY DllMain(HMODULE hModule,  DWORD  nReason, LPVOID lpReserved) {
 }
 ```  
 
-## Let's compile teh dll...  
+## Let's compile tuh dll...  
 
 ```  
 x86_64-w64-mingw32-g++ -shared -o evil.dll evil.cpp -fpermissive
 ```  
 
-## The dll should have compiled. place the dll in the root of the windows drive. The skript is expecting c:\evil.dll  
+## Place the dll in the root of the windows drive. The skript is expecting c:\evil.dll  
 
-**Let's test the DLL...**  
+**Test the DLL...**  
 
 ```  
 rundll32.exe c:\\evil.dll,DllMain
@@ -205,7 +205,7 @@ rundll32.exe c:\\evil.dll,DllMain
 
 **teh skript kat is summoned...**  
 
-## Ok, on to the main C++ code...  
+## Ok, on to the main C++ code, the injection scrip7...  
 
   - example-2.cpp
 ```cpp  
@@ -254,7 +254,7 @@ int main(int argc, char* argv[]) {
 }
 ```  
 
-## Compile the code...  
+## Compile it...  
 
 ```  
 x86_64-w64-mingw32-gcc -O2 example-2.cpp -o example-2.exe -mconsole -s -ffunction-sections -fdata-sections -Wno-write-strings -fno-exceptions -fmerge-all-constants -static-libstdc++ -static-libgcc -fpermissive
@@ -307,7 +307,7 @@ int main(int argc, char* argv[]) {
 }
 ```  
 
-## EZ. Okee, let's see this shit in action...  Compile it again...  
+## EZ. Okee... Compile it again...  
 
 ```  
 x86_64-w64-mingw32-gcc -O2 example-2.cpp -o example-2.exe -mconsole -s -ffunction-sections -fdata-sections -Wno-write-strings -fno-exceptions -fmerge-all-constants -static-libstdc++ -static-libgcc -fpermissive
@@ -458,9 +458,9 @@ go run ./example-3.go <pid>
 
 ## Ok Tim, thats kewl and all, we can make skript cats appear on the screen, but what about something useful, like a simple gob rat POC.  
 
-**gob is a GoLang library to send encrypted data over tcp/ip, its not amazingly well known and has tremendous potential...**  
+**gob is a GoLang library to send encoded data over tcp/ip.**  
 
-## First order of business is our DLL. This time, we're going to write the dll in GoLang.  
+## We'll write a DLL in GoLang...  
 
 - gob-server.go  
 
@@ -580,7 +580,7 @@ go build -buildmode=c-shared -ldflags="-w -s -H=windowsgui" -o gob-server.dll ./
 GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build -buildmode=c-shared -ldflags="-w -s -H=windowsgui" -o gob-server.dll ./gob-server.go
 ``` 
 
-**Either way you compile, the file needs to be dropped in the root directory ochange the dll path in the scr1pt.**  
+**Either way you compile, the file needs to be dropped in the root drive directory or change the dll path in the scr1pt.**  
 
 ## We now have a new Dll, but what is the difference between this one and the last one? 
 
@@ -786,7 +786,7 @@ func main() {
 }
 ```  
 
-## Basically we had to mimic the structure of the dll on disk. We get the dll base address, we get the exported function's address (we actually called this by name, which is handy) and were able to calculate the offset. Once we know the offset, we can access the function in memory by adding the offset to the base address of our remote buffer. We create a new thread and point it at our calculated address. EZ, right.  
+## Basically we had to mimic the structure of the dll on disk. We get the dll base address, we get the exported function's address (we actually called this by name, which is handy) and were able to calculate the offset. Once we know the offset, we can access the function in memory by adding the offset to the base address of our remote buffer. We create a new thread and point it at our remote buffer + offset address. 
 
 
 Here's our fully injected notepad.exe running our gob server.  
@@ -798,7 +798,7 @@ Using Ghidra to find the DLL's exported function offset (this helped a lot in de
 
 ## Here's the gob client if you want to mess with that.  
 
-**It just sends a message to the server.**  
+**Its a bare bones reverse TCP shell POC.**  
 
 - go-gob-client.go  
 
