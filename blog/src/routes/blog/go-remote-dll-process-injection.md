@@ -50,11 +50,11 @@ rundll32 sysdm.cpl,EditEnvironmentVariables
 
 Edit the `Path` variable and add an entry for the location of `mingw64\bin`  
 
-- Open a new terminal and type `gcc --version`, if that errors, the environmental varibale is most likely incorrect.  
+- Open a new terminal and type `gcc --version`, if that errors, the environmental variable `%PATH%` is most likely incorrect.  
 
-**MSVC (Visual Studio) build tools may interfere with compilation, so exclude them from `%PATH%` temporarily if they're installed**  
+> **MSVC (Visual Studio) build tools may interfere with compilation, so exclude them from `%PATH%` temporarily if they're installed**  
 
-I'd installed `VC++ 2017 version 15.9 v14.16` build tools because I wanted `bindump.exe` and uninstalling after I nabbed the `bin` directory containing bindump semmed to fix the DLLs not compiling correctly. A less drastic approach is possible, I was only interested in bindump...  
+> I'd installed `VC++ 2017 version 15.9 v14.16` build tools because I wanted `bindump.exe` and uninstalling after I nabbed the `bin` directory containing bindump seemed to fix the DLLs not compiling correctly. A less drastic approach is possible, I was only interested in bindump... It also may have been me entering the compile commands incorrectly... The codes work, if you're having issues with the dll not doing anything once injected, make sure you're using MinGW-x64.  
 
 # The first thing we're going to do is try injecting some basic shellcode into a remote process just as a quick demo in case you've never done this before and actually the place I went to learn the most basic syntax of the calls.
 
