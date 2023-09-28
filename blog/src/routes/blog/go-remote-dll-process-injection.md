@@ -1,6 +1,6 @@
 ---
 title: 'GoLang malware utilyzing DLL Injection on a remote process'
-description: "Exploring remote process DLL Injection, DLL writing, and a simple gobrat POC."
+description: "Exploring remote process DLL Injection, DLL writing, and deploying a gob encoded tcp bind shell."
 author: 'Tim Sonner'
 date: '2023-07-18'
 hero: '/go-remote-dll-process-injection/go-dll-inject-hero.jpeg'
@@ -496,7 +496,7 @@ go run ./example-3.go <pid>
 
 **gob is a GoLang library to send encoded data over tcp/ip.**  
 
-## We'll write a DLL in GoLang...  
+## We'll write a gob encoded TCP bind shell DLL in GoLang...  
 
 - gob-server.go  
 
@@ -834,7 +834,7 @@ Using Ghidra to find the DLL's exported function offset (this helped a lot in de
 
 ## Here's the gob client if you want to mess with that.  
 
-**Its a bare bones reverse TCP shell POC.**  
+**gob-client for tcp bind shell**  
 
 - go-gob-client.go  
 
