@@ -1,6 +1,6 @@
 <!-- Header.svelte -->
 <header>
-    <a href="/">Tim Sonner</a>
+    
     <nav>
       <ul>
         <li>
@@ -14,6 +14,7 @@
         </li>
       </ul>
     </nav>
+    <a href="/">Tim Sonner</a>
   </header>
 
   <style>
