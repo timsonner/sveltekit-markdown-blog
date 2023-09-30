@@ -2,8 +2,7 @@
 <body>
     <h1>About</h1>
 
-    <p>This blog is about TryHackMe rooms, tools, and code I learn as I research pentesting techniques.</p>
-     
+    <p>I'm Tim, a freelance pentester and network security consultant. I specialize in identifying vulnerabilities, assessing network security, and fortifying your digital defenses. Let's secure your business against cyber threats. Contact me today for more info.</p>    
 </body>
 
 <style>
