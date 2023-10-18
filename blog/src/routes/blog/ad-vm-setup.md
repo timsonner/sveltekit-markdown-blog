@@ -86,7 +86,7 @@ wf.msc
 
 Find and click the **Windows Defender Firewall Properties** link  
 Click the **Customize...** button next to **Protected network connections:** in the dialog
-Uncheck **Ethernet 2**, this allows Network Traffic to and from the host running VirtualBox. These **Ethernet** and **Ethernet 2** adapters are a referene to the VirtualBox Netowk Adapters we created earlier. **Ethernet** is our NAT adapter, **Ethernet 2** is our **Host-only Adapter**      
+Uncheck **Ethernet 2**, this allows Network Traffic to and from the host running VirtualBox. These **Ethernet** and **Ethernet 2** adapters are a referene to the VirtualBox N3twork Adapters we created earlier. **Ethernet** is our NAT adapter, **Ethernet 2** is our **Host-only Adapter**      
 Repeat this process for the remaining **Private Profile** and **Public Profile** tabs  
 
 Try pinging the Windows Server VM (192.168.56.105) from the host OS now...  
@@ -128,7 +128,7 @@ Right click on **Reverse Lookup Zones** and select **New Zone**
 Zone Type: Default Setting (Primary zone)  
 Store the zone in Active Directory: True  
 
-> If you've installed DNS before Active Directory Services, the ***Store the zone in Active Directory** checkbox is how you fix your Reverse DNS lookups... Happened to me, idk...
+> If you've installed DNS before Active Directory Services, the **Store the zone in Active Directory** checkbox is how you fix your Reverse DNS lookups... Happened to me, idk...
 
 Replication Scope: All DNS servers running on domain controllers in this domain: timsonner.com
 
