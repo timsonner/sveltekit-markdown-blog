@@ -30,7 +30,7 @@ published: true
 
 > ## "There are 10 types of people in this world, those who understand binary, and those who don't" - l33t H4x0r n0nymouse po3t skholar  
 
-## So where were we... Oh, the IP address. Its made up of 4 bytes, the number in each byte is always in the range of 0 to 255 exclusively. Did I use exclusively correctly? I mean that 0 is the lowest and 255 is the highest, giving 256 different possible values.  
+## So where were we... Oh, the IP address. Its made up of 4 bytes, the number in each byte is always in the range of 0 to 255 exclusively. Did I use exclusively correctly? I mean that 0 is the minimum value and 255 is the maximum, giving 256 different possible values.  
 
 ## Why is the max value for a 8 bit binary byte 255? Because ```1+2+4+8+16+32+64+128 = 255``` Thats why. Ok, so a random bunch of numbers equals 255, what does that have to do with binary?  
 
@@ -112,7 +112,7 @@ func convertToBinary(number int) string {
 
 ![](/ipv4-deepdive/rfc-796.png)  
 
-## Lets get back to the binary we know and love. According to this diagram, a Class A network must start with a 0 in the highest significant bit and the first byte is reserved for network assignment. So out of 8 network address bits, one bit is static (the highest, first bit) and 7 are variable. So, this tells us that ```00000000``` is the lowest address possible, and ```01111111``` is the greatest address available. Lets do the conversions. Copying and pasting from above, but excluding the highest order bit value (128, because it will be a 0) we get ```0+64+32+16+8+4+2+1```. Pasting that into my calculator that gives us...
+## Lets get back to the binary we know and love. According to this diagram, a Class A network must start with a 0 in the highest significant bit and the first byte is reserved for network assignment. So out of 8 network address bits, one bit is static (the highest, first bit) and 7 are variable. So, this tells us that ```00000000``` is the minimum address possible, and ```01111111``` is the maximum address available. Lets do the conversions. Copying and pasting from above, but excluding the highest order bit value (128, because it will be a 0) we get ```0+64+32+16+8+4+2+1```. Pasting that into my calculator that gives us...
 
 ![](/ipv4-deepdive/calc.png)  
 
@@ -120,9 +120,9 @@ func convertToBinary(number int) string {
 
 ## ```2^7 = 128``` works for class A. The highest order bit is static, the remaining 7 (the N) of the byte are variable.  
 
-## Lets take a look at Class B from RFC 796, we know that the highest order 2 bits need to start with ```10``` and we have a total of 16 bits available for network section. The lowest possible first byte value should be ```10000000``` and the greatest value should be ```10111111```. I can tell just by looking that the lowest first byte value is 128 (only a single 1 at highest order bit) and the greatest value of the first byte should be 255 (255 - 64), because the 64 score is the only 0 in ```10111111```. That gives us 191. Lets scroll up and see if I'm correct. So we have 128.0.x.x for the lowest and 191.255.x.x for the highest in Class B. Lets do Class C... ```110``` is the static bit requirement, so ```11000000``` (128 + 64) is our lowest value and ```11011111``` (255 - 32) is the greatest value for the first byte. Lowest first byte value: 192, greatest first byte value: 223. Scrolling up to check our work...  
+## Lets take a look at Class B from RFC 796, we know that the highest order 2 bits need to start with ```10``` and we have a total of 16 bits available for network section. The minimum first byte value should be ```10000000``` and the maximum value should be ```10111111```. I can tell just by looking that the minimum first byte value is 128 (only a single 1 at highest order bit) and the maximum value of the first byte should be 255 (255 - 64), because the 64 score is the only 0 in ```10111111```. That gives us 191. Lets scroll up and see if I'm correct. So we have 128.0.x.x for the minimum value and 191.255.x.x for the maximum value in Class B. Lets do Class C... ```110``` is the static bit requirement, so ```11000000``` (128 + 64) is our minimum value and ```11011111``` (255 - 32) is the maximum value for the first byte. Minimum first byte value: 192, maximum first byte value: 223. Scrolling up to check our work...  
 
-## Class D. Deez Nutz. Ha. Got eem! Seriously tho, stop messing around, this is when we get into an important topic called Multicasting... Class D starts with the first 4 static bits ```1110```. The RFC for Multicast is RFC 3171 https://datatracker.ietf.org/doc/html/rfc3171 we can see that we have an expected range of 224.0.0.0 to 239.255.255.255, lets test this out... The lowest first byte value will be ```11100000``` (224) and the greatest first byte value will be ```11101111``` (239). Sweet! So our calculations make sense, what the hell is Multicast?  
+## Class D. Deez Nutz. Ha. Got eem! Seriously tho, stop messing around, this is when we get into an important topic called Multicasting... Class D starts with the first 4 static bits ```1110```. The RFC for Multicast is RFC 3171 https://datatracker.ietf.org/doc/html/rfc3171 we can see that we have an expected range of 224.0.0.0 to 239.255.255.255, lets test this out... The minimum first byte value will be ```11100000``` (224) and the maximum first byte value will be ```11101111``` (239). Sweet! So our calculations make sense, what the hell is Multicast?  
 
 ## Multicast is kinda like a social media post... Your post is targetted at your connections or anyone following the post's hash tags, your audience sees it in their feed, if they engage with the post (utilize a service or protocol) its up to them. One sees a lot of multicast traffic in Wireshark, understanding it helps us "filter" out the noise. See what I did there?  
 
@@ -171,7 +171,7 @@ Usable host addresses: 192.168.1.1 to 192.168.1.254
 Broadcast address: 192.168.1.255  
 ```  
  
-## The broadcast address is typically the highest address value of the 4th byte in the range (255), such as 192.168.1.255, hosts use this address when they want to broadcast to anyone listening, hosts of the network listen to this address for broadcasts from other hosts or devices.
+## The broadcast address is typically the maximum address value of the 4th byte in the range (255), such as 192.168.1.255, hosts use this address when they want to broadcast to anyone listening, hosts of the network listen to this address for broadcasts from other hosts or devices.
 
 ## The network address is always at 0, it basically is just used to identify the network. Giving the command ```nmap -sn 10.9.8.0/24``` says "Ping scan the last 8 bits of addresses at this network address."      
 
