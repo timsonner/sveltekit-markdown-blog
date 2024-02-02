@@ -20,13 +20,13 @@ published: true
 
 ## Lets get to it. Less talk, more rock...  
 
-### Where to begin...
+### Where to begin...  
 
 # Binary.  
 
 ## Yah know, how things used to be before it was a social construct... 1s and zer03s, true or false, yes or no, on or off, outie or innie.  
 
-## An Int type in programming is made up of 32 bits, thats 32 1s, 0s, or combination thereof. A single IPv4 address can fit inside an Int, because an IPv4  address is exactly 32 bits long. If you don't know that a byte is 8 bits, cache that in memory. Fun fact, half a byte is called a nibble. 
+## An Int type in programming is made up of 32 bits, thats 32 1s, 0s, or combination thereof. A single IPv4 address can fit inside an Int, because an IPv4  address is exactly 32 bits long. If you don't know that a byte is 8 bits, cache that in memory. Fun fact, half a byte is called a nibble.  
 
 > ## "There are 10 types of people in this world, those who understand binary, and those who don't" - l33t H4x0r n0nymouse po3t skholar  
 
@@ -43,7 +43,7 @@ published: true
 ## Remember this???  
 > ## "Why is the max value for a 8 bit binary byte 255? Because ```1+2+4+8+16+32+64+128``` = 255 Thats why." - Some Foo  
 
-## Odd, ```1+2+4+8+16+32+64+128``` is 8 numbers, the same ammount of bits in a byte. These numbers are our scores, except they're backwards. Lets flip them like a fascist coup de etat. Now we have ```128+64+32+16+8+4+2+1```, this is the correct scoring sequence for our binary number ```00001010``` (10 decimal, remember???). So starting from the right, we have a zero, then we have a 1 (score, worth 2), then a 0, then a one (score worth 8), followed by 4 0s. See how these Numbers map?
+## Odd, ```1+2+4+8+16+32+64+128``` is 8 numbers, the same ammount of bits in a byte. These numbers are our scores, except they're backwards. Lets flip them like a fascist coup de etat. Now we have ```128+64+32+16+8+4+2+1```, this is the correct scoring sequence for our binary number ```00001010``` (10 decimal, remember???). So starting from the right, we have a zero, then we have a 1 (score, worth 2), then a 0, then a one (score worth 8), followed by 4 0s. See how these Numbers map?  
 
 | 128 | 64 | 32 | 16 | 8 | 4 | 2 | 1 |
 |-----|----|----|----|---|---|---|---|
@@ -99,10 +99,11 @@ func convertToBinary(number int) string {
 
 ## Its time we discussed classes. There are 4 classes I'll cover, 5 total, but I legit don't know much about the 5th one. So we have A,B,C, and D classes of IPv4 addresses. This is where all this binary stuff comes into play. Lets start with Class A. We're going to reference some RFCs from 1981. The first RFC to check out is RFC 790 (https://datatracker.ietf.org/doc/html/rfc790).  
 
-## A concept we need to have is network vs host address. We can have either lots of networks, or lots of hosts. Class A has the most hosts and the smallest network, with only 128 possible networks (0 and 1-127).   
+## A concept we need to have is network vs host address. We can have either lots of networks, or lots of hosts. Class A has the most hosts and the smallest network, with only 128 possible networks (0 and 1-127).  
+
 ![](/ipv4-deepdive/rfc-970-class-a.png)  
 
-## So, high level... Class A is only concerned with the first byte of the IP address, the network section, the last 3 bytes can do as they please...
+## So, high level... Class A is only concerned with the first byte of the IP address, the network section, the last 3 bytes can do as they please...  
 
 ![](/ipv4-deepdive/rfc-970-class-b-c.png)  
 
@@ -112,7 +113,7 @@ func convertToBinary(number int) string {
 
 ![](/ipv4-deepdive/rfc-796.png)  
 
-## Lets get back to the binary we know and love. According to this diagram, a Class A network must start with a 0 in the highest significant bit and the first byte is reserved for network assignment. So out of 8 network address bits, one bit is static (the highest, first bit) and 7 are variable. So, this tells us that ```00000000``` is the minimum address possible, and ```01111111``` is the maximum address available. Lets do the conversions. Copying and pasting from above, but excluding the highest order bit value (128, because it will be a 0) we get ```0+64+32+16+8+4+2+1```. Pasting that into my calculator that gives us...
+## Lets get back to the binary we know and love. According to this diagram, a Class A network must start with a 0 in the highest significant bit and the first byte is reserved for network assignment. So out of 8 network address bits, one bit is static (the highest, first bit) and 7 are variable. So, this tells us that ```00000000``` is the minimum address possible, and ```01111111``` is the maximum address available. Lets do the conversions. Copying and pasting from above, but excluding the highest order bit value (128, because it will be a 0) we get ```0+64+32+16+8+4+2+1```. Pasting that into my calculator that gives us...  
 
 ![](/ipv4-deepdive/calc.png)  
 
@@ -126,7 +127,7 @@ func convertToBinary(number int) string {
 
 ## Multicast is kinda like a social media post... Your post is targetted at your connections or anyone following the post's hash tags, your audience sees it in their feed, if they engage with the post (utilize a service or protocol) its up to them. One sees a lot of multicast traffic in Wireshark, understanding it helps us "filter" out the noise. See what I did there?  
 
-## Broadcast is like a radio station or a web spider, it goes everywhere within range... Multicast is scoped. Multi - Many. Broad - Wide. More on broadcast later.
+## Broadcast is like a radio station or a web spider, it goes everywhere within range... Multicast is scoped. Multi - Many. Broad - Wide. More on broadcast later.  
 
 ![](/ipv4-deepdive/wireshark.png)  
 
@@ -163,6 +164,7 @@ func convertToBinary(number int) string {
 ```
 
 ##  In a network, we always have 2 addresses pre-allocated. The network address and the broadcast address...  
+
 ## So, for a /24 subnet, the addresses include:  
 
 ```  
@@ -171,9 +173,9 @@ Usable host addresses: 192.168.1.1 to 192.168.1.254
 Broadcast address: 192.168.1.255  
 ```  
  
-## The broadcast address is typically the maximum address value of the 4th byte in the range (255), such as 192.168.1.255, hosts use this address when they want to broadcast to anyone listening, hosts of the network listen to this address for broadcasts from other hosts or devices.
+## The broadcast address is typically the maximum address value of the 4th byte in the range (255), such as 192.168.1.255, hosts use this address when they want to broadcast to anyone listening, hosts of the network listen to this address for broadcasts from other hosts or devices.  
 
-## The network address is always at 0, it basically is just used to identify the network. Giving the command ```nmap -sn 10.9.8.0/24``` says "Ping scan the last 8 bits of addresses at this network address."      
+## The network address is always at 0, it basically is just used to identify the network. Giving the command ```nmap -sn 10.9.8.0/24``` says "Ping scan the last 8 bits of addresses at this network address."  
 
 ## The binary representation goes up to 255 in each byte, the total number of addresses (including network and broadcast) is 256 becaus a byte can be 255 or 0 which is 256 possibilities.  
 
@@ -185,11 +187,11 @@ Broadcast address: 192.168.1.255
 
 ![](/ipv4-deepdive/rfc-1918.png)  
 
-## We really just need to understand these ranges. Th 10 network is a class A network. The 172.16 Network is Class B, therefore we know highest static bits must be binary ```10``` (128). The RFC tells us 12 bits are for network addresses, since we are starting at 172, our first byte is ```10101100```. That start of the second byte is ```00010000``` (the 1 is the 12th of 32 bits in the second byte ```10101100.00010000```) which has a decimal value of 16 (172.16), the maximum value for the second byte is ```00011111``` or decimal 31, or 172.31 (```10101100.00011111```). The 192.168 address space has 2 bytes available for hosts.
+## We really just need to understand these ranges. Th 10 network is a class A network. The 172.16 Network is Class B, therefore we know highest static bits must be binary ```10``` (128). The RFC tells us 12 bits are for network addresses, since we are starting at 172, our first byte is ```10101100```. That start of the second byte is ```00010000``` (the 1 is the 12th of 32 bits in the second byte ```10101100.00010000```) which has a decimal value of 16 (172.16), the maximum value for the second byte is ```00011111``` or decimal 31, or 172.31 (```10101100.00011111```). The 192.168 address space has 2 bytes available for hosts.  
 
 ## Don't overthink private address ranges, just know they exist, they don't hit the internet, and recognize them when you see them.  
 
-# APIPA - Automatic Private IP Addressing  
+# APIPA - Automatic Private IP Addressing
 
 ## If we look at RFC 5735 (https://datatracker.ietf.org/doc/html/rfc5735), we can se the beautiful and unique snowflakes of the networking world. One such entry is the range of 169.254.0.1-169.254.255.255 or the Automatic Private IP Addressing Range.  
 
@@ -197,11 +199,11 @@ Broadcast address: 192.168.1.255
 
 ## When DHCP isn't available to obtain an IPv4 address, computers assign themselves addresses. Take this scenario. I take my laptop and run an ethernet cable from it to a PC. Neither computer is connected to the internet. The PCs have created their own network and can communicate back and forth on the APIPA network. If we opened up Wireshark, we could see some of this traffic, perhaps discovering a hostname or wether the PC connected to the laptop is domain joined or in a WORKGROUP (NBNS seems to leak quite a bit, refer to the section above for other protocols).  
 
-## Again, if you aren't connected to the internet and you see addresses in the range of 169.254.0.1-169.254.255.255 in WiireShark, it means you're using APIPA and are on a "Link Local" network.
+## Again, if you aren't connected to the internet and you see addresses in the range of 169.254.0.1-169.254.255.255 in WiireShark, it means you're using APIPA and are on a "Link Local" network.  
 
 # Conclusion  
 
-## Hopefully this made you more smarter and betterer at networking. I didn't cover everthing, but hopefully now you have the tools and ability to research these topics further and can understand them in your own way. Best wishes to you, all the good things in life, abundance and blessings, understanding of the universe and our existence, and the undeniable oneness of all things.
+## Hopefully this made you more smarter and betterer at networking. I didn't cover everthing, but hopefully now you have the tools and ability to research these topics further and can understand them in your own way. Best wishes to you, all the good things in life, abundance and blessings, understanding of the universe and our existence, and the undeniable oneness of all things.  
 
 
 
