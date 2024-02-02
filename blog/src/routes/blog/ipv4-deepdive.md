@@ -3,7 +3,7 @@ title: 'IPv4 Deep Dive'
 description: "A slightly on the spectrum look at IPv4 addresing and classes"
 author: 'Tim Sonner'
 date: '2024-01-31'
-hero: '/ipv4-deepdive/ipv4-deepdive-hero.jpeg'
+hero: '/ipv4-deepdive/ipv4-deepdive-hero.jpg'
 published: true
 ---
 
