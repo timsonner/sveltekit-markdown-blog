@@ -7,7 +7,7 @@ hero: '/ipv4-deepdive/ipv4-deepdive-hero.jpeg'
 published: true
 ---
 
-![](../../../static/ipv4-deepdive/ipv4-deepdive-hero.jpg)  
+![](/ipv4-deepdive/ipv4-deepdive-hero.jpg)  
 
 > English: wild orang utans, Gunung Leuser NP, Sumatra  
 > Date: 13 September 2009  
@@ -96,21 +96,21 @@ func convertToBinary(number int) string {
 ## Its time we discussed classes. There are 4 classes I'll cover, 5 total, but I legit don't know much about the 5th one. So we have A,B,C, and D classes of IPv4 addresses. This is where all this binary stuff comes into play. Lets start with Class A. We're going to reference some RFCs from 1981. The first RFC to check out is RFC 790 (https://datatracker.ietf.org/doc/html/rfc790).  
 
 ## A concept we need to have is network vs host address. We can have either lots of networks, or lots of hosts. Class A has the most hosts and the smallest network, with only 128 possible networks.   
-![](../../../static/ipv4-deepdive/rfc-970-class-a.png)  
+![](/ipv4-deepdive/rfc-970-class-a.png)  
 
 ## So, high level... Class A is only concerned with the first byte of the IP address, the network section, the last 3 bytes can do as they please...
 
-![](../../../static/ipv4-deepdive/rfc-970-class-b-c.png)  
+![](/ipv4-deepdive/rfc-970-class-b-c.png)  
 
 ## Class B is concerned with the first 2 bytes, Class C is concerned with the first 3 bytes...  
 
 ## The second RFC we'll check out is RFC 796 (https://datatracker.ietf.org/doc/html/rfc796). This basically reiterates what we've covered thus far and introduces the concept of the highest significant bits being static depending on class.  
 
-![](../../../static/ipv4-deepdive/rfc-796.png)  
+![](/ipv4-deepdive/rfc-796.png)  
 
 ## LEts get back to the binary we know and love. According to this diagram, a Class A network must start with a 0 in the highest significant bit and the first byte is reserved for network assignment. So out of 8 bits, only 7 are available. So, this tells us that ```00000000``` is the lowest address possible, and ```01111111``` is the highest address available. Lets do the conversions. Copying and pasting from above, but excluding the highest order bit value (128, because it will be a 0) we get ```0+64+32+16+8+4+2+1```. Pasting that into my calculator that gives us...
 
-![](../../../static/ipv4-deepdive/calc.png)  
+![](/ipv4-deepdive/calc.png)  
 
 ## Scrolling back up to RFC 970 screenshots confirms this. Class A is indeed 0 to 127 or ```00000000``` to ```011111111```. Lets take a look at Class B from RFC 796, we know that the highest 2 bits need to start with ```10``` and we have a total of 16 bits available for network section. The lowest possible first byte value should be ```10000000``` and the highest value should be ```10111111```. I can tell you just by looking that the lowest first byte value is 128 and the highest value of the first byte should be 255 - 64, because the 64 score is the only 0 in ```10111111```. That gives us 191. Lets scroll up and see if I'm correct. So we have 128.0.x.x for the lowest and 191.255.x.x for the highest in Class B. Lets do Class C... ```110``` is the static bit requirement, so ```11000000``` (128 + 64) is our lowest and ```11011111``` (255 - 32) is the highest for the first byte. Lowest first byte: 192, highest first byte: 223. Scrolling up to check our work...  
 
@@ -118,13 +118,13 @@ func convertToBinary(number int) string {
 
 ## Multicast is kinda like a blog or social media post... You just full send it, you may or may not get feed back from your audience. That same stuff happens on the network. One sees a lot of multicast traffic in WireShark, understanding it helps us "filter" out the noise. <- See what I did there?  
 
-![](../../../static/ipv4-deepdive/wireshark.png)  
+![](/ipv4-deepdive/wireshark.png)  
 
 ## Just knowing that the multicast range falls between 224.0.0.0 and 239.255.255.255 can simplify your understanding of a pcap or Wireshark scan... Some of the interesting Multicast protocols are LLMNR, SSDP, NBNS, MDNS, and IGMP.  
 
 ## RFC 3171 has a rad table for explaining CIDR, so I'm going to go off on a CIDR tangent for a minute. WTF is /24 or /8 or 255.255.0.0 or Netmask? Lets take a look a this table...  
 
-![](../../../static/ipv4-deepdive/rfc-3717.png)  
+![](/ipv4-deepdive/rfc-3717.png)  
 
 ## So, the /X number just means number of bits allocated to the network portion of the IP.  
 
@@ -172,7 +172,7 @@ Broadcast address: 192.168.1.255
 
 ## We're going to reference RFC 1918 https://datatracker.ietf.org/doc/html/rfc1918.  
 
-![](../../../static/ipv4-deepdive/rfc-1918.png)  
+![](/ipv4-deepdive/rfc-1918.png)  
 
 ## We really just need to understand these ranges. Th 10 network is a class A network. The 172.16 Network is Class B, therefore we know highest static bits must be binary ```10``` (128). The RFC tells us 12 bits are for network addresses, since we are starting at 172, our first byte is ```10101100```. That start of the second byte is ```00010000``` (the 1 is the 12th bit in the second byte ```10101100.00010000```) which has a decimal value of 16 (172.16), the maximum value for the second byte is ```00011111``` or decimal 31, or 172.31 (```10101100.00011111```). The 192.168 address space has 2 bytes available for hosts.
 
@@ -182,7 +182,7 @@ Broadcast address: 192.168.1.255
 
 ## If we look at RFC 5735 (https://datatracker.ietf.org/doc/html/rfc5735), we can se the beautiful and unique snowflakes of the networking world. One such entry is the range of 169.254.0.1-169.254.255.255 or the Automatic Private IP Addressing Range.  
 
-![](../../../static/ipv4-deepdive/rfc-5735.png)  
+![](/ipv4-deepdive/rfc-5735.png)  
 
 ## When DHCP isn't available to obtain an IPv4 address, computers assign themselves addresses. Take this scenario. I take my laptop and run an ethernet cable from it to a PC. Neither computer is connected to the internet. The PCs have created their own network and can communicate back and forth on the APIPA network. If we opened up Wireshark, we could see some of this traffic, perhaps discovering a hostname or wether the PC connected to the laptop is domain joined or in a WORKGROUP (NBNS seems to leak quite a bit, refer to the section above for other protocols).  
 
