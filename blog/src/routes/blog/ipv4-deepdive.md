@@ -36,7 +36,7 @@ published: true
 
 ## Binary has two options, 1 or 0, it's called base 2. Hexadecimal has 16 options (```1,2,3,4,5,6,7,8,9,A,B,C,D,E,F```) and is called base 16, decimal has 1-10 as options and is called base 10. Just remember base 2.  
 
-## So, lets take the binary equavalent of the decimal number 10. ```00001010``` - Why 10? Because if you can remember ```00001010``` is 10, you know a binary number and are well on your way to great things. How the does ```00001010``` equal 10 homie? Lets break it down...  
+## So, lets take the binary equavalent of the decimal number 10. ```00001010``` - Why 10? Because if you can remember ```00001010``` is 10, you know a binary number and are well on your way to great things. How does ```00001010``` equal 10 homie? Lets break it down...  
 
 ## Each byte (8 bits) has a low and high order bit. High order is on the left, low order is on the right (its just the way it is). Moving from right to left (low to high), we can convert the binary byte one bit at a time. I like to think of it as a game, each bit is worth a certain ammount of points, if the bit is a 1, you get points, if the bit is a 0, no points. So in a byte, we have 8 chances to score. Lets calculate the binary score of our decimal number 10.  
 
@@ -120,11 +120,19 @@ func convertToBinary(number int) string {
 
 ## Class D. Deez Nutz. Ha. Got eem! Seriously tho, stop messing around, this is when we get into an important topic called Multicasting... Class D starts with the first 4 static bits ```1110```. The RFC for Multicast is RFC 3171 https://datatracker.ietf.org/doc/html/rfc3171 we can see that we have an expected range of 224.0.0.0 to 239.255.255.255, lets test this out... The lowest first byte value will be ```11100000``` (224) and the highest first byte value will be ```11101111``` (239). Sweet! So our calculations make sense, what the hell is Multicast?  
 
-## Multicast is kinda like a blog or social media post... You just full send it, you may or may not get feed back from your audience. That same stuff happens on the network. One sees a lot of multicast traffic in WireShark, understanding it helps us "filter" out the noise. See what I did there?  
+## Multicast is kinda like a social media post... Your post is targetted at your connections or anyone following the post's hash tags, your audience sees it in their feed, if they engage with the post (utilize a service or protocol) its up to them. One sees a lot of multicast traffic in Wireshark, understanding it helps us "filter" out the noise. See what I did there?  
+
+## Broadcast is like a radio station or a web spider, it goes everywhere within range... Multicast is scoped. Multi - Many. Broad - Wide. More on broadcast later.
 
 ![](/ipv4-deepdive/wireshark.png)  
 
 ## Just knowing that the multicast range falls between 224.0.0.0 and 239.255.255.255 can simplify your understanding of a pcap or Wireshark scan... Some of the interesting Multicast protocols are LLMNR, SSDP, NBNS, MDNS, and IGMP.  
+
+> Wireshark filter for Multicast: ip.dst[0] & 0xf0 == 0xe0  
+> ip.dst[0] extracts the first byte of the destination IP address.  
+> & is the bitwise AND operator.  
+> 0xf0 is the hexadecimal representation of 11110000 in binary, which is used to mask the upper 4 bits.  
+> == 0xe0 checks if the first 4 bits are equal to 1110 in binary.  
 
 ## RFC 3171 has a rad table for explaining CIDR, so I'm going to go off on a CIDR tangent for a minute. WTF is /24 or /8 or 255.255.0.0 or Netmask? Lets take a look a this table...  
 
@@ -159,18 +167,13 @@ Usable host addresses: 192.168.1.1 to 192.168.1.254
 Broadcast address: 192.168.1.255  
 ```  
  
-## The broadcast address is typically the highest address value of the 4th byte in the range (255), such as 192.168.1.255, the network address is always at 0.   
+## The broadcast address is typically the highest address value of the 4th byte in the range (255), such as 192.168.1.255, hosts use this address when they want to broadcast to anyone listening, hosts of the network listen to this address for broadcasts from other hosts or devices.
+
+## The network address is always at 0, it basically is just used to identify the network. Giving the command ```nmap -sn 10.9.8.0/24``` says "Ping scan the last 8 bits of addresses at this network address."      
 
 ## The binary representation goes up to 255 in each byte, the total number of addresses (including network and broadcast) is 256 becaus a byte can be 255 or 0 which is 256 possibilities.  
 
-
-## This website is pretty banger, they do a great job of explaining the network class types in an aesthetically pleasing way. They also have some tools and what seems like a propensity for mischief... https://en.ipshu.com/a-b-c-d-e  
-
-> WireShark filter for Multicast: ip.dst[0] & 0xf0 == 0xe0  
-> ip.dst[0] extracts the first byte of the destination IP address.  
-> & is the bitwise AND operator.  
-> 0xf0 is the hexadecimal representation of 11110000 in binary, which is used to mask the upper 4 bits.  
-> == 0xe0 checks if the first 4 bits are equal to 1110 in binary.  
+## This website is pretty banger, they do a great job of explaining the network class types in an aesthetically pleasing way. They also have some tools and what seems like a propensity for mischief... https://en.ipshu.com/a-b-c-d-e.  
 
 # Can we move onto private networks now?  
 
