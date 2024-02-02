@@ -28,7 +28,7 @@ published: true
 
 ## An Int type in programming is made up of 32 bits, thats 32 1s, 0s, or combination thereof. A single IPv4 address can fit inside an Int, because an IPv4  address is exactly 32 bits long. If you don't know that a byte is 8 bits, cache that in memory. Fun fact, half a byte is called a nibble. 
 
-> "There are 10 types of people in this world, those who understand binary, and those who don't" - l33t H4x0r n0nymouse po3t skholar  
+> ## "There are 10 types of people in this world, those who understand binary, and those who don't" - l33t H4x0r n0nymouse po3t skholar  
 
 ## So where were we... Oh, the IP address. Its made up of 4 bytes, the number in each byte is always in the range of 0 to 255 exclusively. Did I use exclusively correctly? I mean that 0 is the lowest and 255 is the highest, giving 256 different possible values.  
 
@@ -51,19 +51,23 @@ published: true
 |     |    |    |    | 8 |   | 2 |   |
 
 
-## As you can see, after scoring we end up with an 8 and a 2. Thats a fun way to think about it, buthis is whe---|---------------------|---------------------|---------------------|---------------------|
-|      10       |         0           |         0           |         0           |         0           |         1           |         0           |         1           |         0           |  
+## As you can see, after scoring we end up with an 8 and a 2. Thats a fun way to think about it, but there are also some mafs involved if you prefer...  
+
+| \(times 2^7\) | \(times 2^6\) | \(times 2^5\) | \(times 2^4\) | \(times 2^3\) | \(times 2^2\) | \(times 2^1\) | \(times 2^0\) |
+|---------------|-------------------|-------------------|-------------------|-------------------|-------------------|-------------------|-------------------|-------------------|
+|         0         |         0         |         0         |         0         |         1         |         0         |         1         |         0         |
+
 
 ## ```10 = (0×2^7)+(0×2^6)+(0×2^5)+(0×2^4)+(1×2^3)+(0×2^2)+(1×2^1)+(0×2^0)```  
 
 > ## Fire up CyberChef https://gchq.github.io/CyberChef/ - Use the "From Binary" and "To Decimal" recipes. You'll learn more by experimenting here than I can teach. Type in ```00001010``` in the input, it will be 10 as output.  
 
-> ## If you want a few more examples maybe check this site out. https://www.rapidtables.com/convert/number/how-binary-to-decimal.html  
+> ## If you want a few more examples of converting binary to decimal maybe check this site out. https://www.rapidtables.com/convert/number/how-binary-to-decimal.html  
 
 ## Here's a programatic version that converts a decimal number to an 8 bit binary byte, written in GoLang. It will take any decimal number, but starts over at 256...  
 
 go-convert-decimal-to-binary.go  
-```golang  
+```go 
 package main
 
 import "fmt"
