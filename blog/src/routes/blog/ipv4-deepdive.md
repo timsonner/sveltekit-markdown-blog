@@ -60,7 +60,7 @@ published: true
 
 ## ```10 = (0×2^7)+(0×2^6)+(0×2^5)+(0×2^4)+(1×2^3)+(0×2^2)+(1×2^1)+(0×2^0)```  
 
-> ## Fire up CyberChef https://gchq.github.io/CyberChef/ - Use the "From Binary" and "To Decimal" recipes. You'll learn more by experimenting here than I can teach. Type in ```00001010``` in the input, it will be 10 as output.  
+> ## Fire up CyberChef https://gchq.github.io/CyberChef/ - Use the "From Binary" and "To Decimal" recipes. You'll learn more by experimenting than I can teach. Type in ```00001010``` in the input, it will be decimal 10 as output, alter a bit at a time to get instant feedback.  
 
 > ## If you want a few more examples of converting binary to decimal maybe check this site out. https://www.rapidtables.com/convert/number/how-binary-to-decimal.html  
 
@@ -99,7 +99,7 @@ func convertToBinary(number int) string {
 
 ## Its time we discussed classes. There are 4 classes I'll cover, 5 total, but I legit don't know much about the 5th one. So we have A,B,C, and D classes of IPv4 addresses. This is where all this binary stuff comes into play. Lets start with Class A. We're going to reference some RFCs from 1981. The first RFC to check out is RFC 790 (https://datatracker.ietf.org/doc/html/rfc790).  
 
-## A concept we need to have is network vs host address. We can have either lots of networks, or lots of hosts. Class A has the most hosts and the smallest network, with only 128 possible networks.   
+## A concept we need to have is network vs host address. We can have either lots of networks, or lots of hosts. Class A has the most hosts and the smallest network, with only 128 possible networks (0 and 1-127).   
 ![](/ipv4-deepdive/rfc-970-class-a.png)  
 
 ## So, high level... Class A is only concerned with the first byte of the IP address, the network section, the last 3 bytes can do as they please...
@@ -108,17 +108,21 @@ func convertToBinary(number int) string {
 
 ## Class B is concerned with the first 2 bytes, Class C is concerned with the first 3 bytes...  
 
-## The second RFC we'll check out is RFC 796 (https://datatracker.ietf.org/doc/html/rfc796). This basically reiterates what we've covered thus far and introduces the concept of the highest significant bits being static depending on class.  
+## The second RFC we'll check out is RFC 796 (https://datatracker.ietf.org/doc/html/rfc796). This RFC reiterates what we've covered thus far and introduces the concept of the highest significant bits being static depending on class.  
 
 ![](/ipv4-deepdive/rfc-796.png)  
 
-## LEts get back to the binary we know and love. According to this diagram, a Class A network must start with a 0 in the highest significant bit and the first byte is reserved for network assignment. So out of 8 bits, only 7 are available. So, this tells us that ```00000000``` is the lowest address possible, and ```01111111``` is the highest address available. Lets do the conversions. Copying and pasting from above, but excluding the highest order bit value (128, because it will be a 0) we get ```0+64+32+16+8+4+2+1```. Pasting that into my calculator that gives us...
+## Lets get back to the binary we know and love. According to this diagram, a Class A network must start with a 0 in the highest significant bit and the first byte is reserved for network assignment. So out of 8 network address bits, one bit is static (the highest, first bit) and 7 are variable. So, this tells us that ```00000000``` is the lowest address possible, and ```01111111``` is the greatest address available. Lets do the conversions. Copying and pasting from above, but excluding the highest order bit value (128, because it will be a 0) we get ```0+64+32+16+8+4+2+1```. Pasting that into my calculator that gives us...
 
 ![](/ipv4-deepdive/calc.png)  
 
-## Scrolling back up to RFC 970 screenshots confirms this. Class A is indeed 0 to 127 or ```00000000``` to ```011111111```. Lets take a look at Class B from RFC 796, we know that the highest 2 bits need to start with ```10``` and we have a total of 16 bits available for network section. The lowest possible first byte value should be ```10000000``` and the highest value should be ```10111111```. I can tell you just by looking that the lowest first byte value is 128 and the highest value of the first byte should be 255 - 64, because the 64 score is the only 0 in ```10111111```. That gives us 191. Lets scroll up and see if I'm correct. So we have 128.0.x.x for the lowest and 191.255.x.x for the highest in Class B. Lets do Class C... ```110``` is the static bit requirement, so ```11000000``` (128 + 64) is our lowest and ```11011111``` (255 - 32) is the highest for the first byte. Lowest first byte: 192, highest first byte: 223. Scrolling up to check our work...  
+## Scrolling back up to RFC 970 screenshots confirms this. Class A is indeed 0 to 127 (128 addresses) or ```00000000``` to ```011111111```.  We can also calculate the number of networks by using the formula ```2^N``` where ```N``` is the number of bits used for the network address.  
 
-## Class D. Deez Nutz. Ha. Got eem! Seriously tho, stop messing around, this is when we get into an important topic called Multicasting... Class D starts with the first 4 static bits ```1110```. The RFC for Multicast is RFC 3171 https://datatracker.ietf.org/doc/html/rfc3171 we can see that we have an expected range of 224.0.0.0 to 239.255.255.255, lets test this out... The lowest first byte value will be ```11100000``` (224) and the highest first byte value will be ```11101111``` (239). Sweet! So our calculations make sense, what the hell is Multicast?  
+## ```2^7 = 128``` works for class A. The highest order bit is static, the remaining 7 (the N) of the byte are variable.  
+
+## Lets take a look at Class B from RFC 796, we know that the highest order 2 bits need to start with ```10``` and we have a total of 16 bits available for network section. The lowest possible first byte value should be ```10000000``` and the greatest value should be ```10111111```. I can tell just by looking that the lowest first byte value is 128 (only a single 1 at highest order bit) and the greatest value of the first byte should be 255 (255 - 64), because the 64 score is the only 0 in ```10111111```. That gives us 191. Lets scroll up and see if I'm correct. So we have 128.0.x.x for the lowest and 191.255.x.x for the highest in Class B. Lets do Class C... ```110``` is the static bit requirement, so ```11000000``` (128 + 64) is our lowest value and ```11011111``` (255 - 32) is the greatest value for the first byte. Lowest first byte value: 192, greatest first byte value: 223. Scrolling up to check our work...  
+
+## Class D. Deez Nutz. Ha. Got eem! Seriously tho, stop messing around, this is when we get into an important topic called Multicasting... Class D starts with the first 4 static bits ```1110```. The RFC for Multicast is RFC 3171 https://datatracker.ietf.org/doc/html/rfc3171 we can see that we have an expected range of 224.0.0.0 to 239.255.255.255, lets test this out... The lowest first byte value will be ```11100000``` (224) and the greatest first byte value will be ```11101111``` (239). Sweet! So our calculations make sense, what the hell is Multicast?  
 
 ## Multicast is kinda like a social media post... Your post is targetted at your connections or anyone following the post's hash tags, your audience sees it in their feed, if they engage with the post (utilize a service or protocol) its up to them. One sees a lot of multicast traffic in Wireshark, understanding it helps us "filter" out the noise. See what I did there?  
 
@@ -181,7 +185,7 @@ Broadcast address: 192.168.1.255
 
 ![](/ipv4-deepdive/rfc-1918.png)  
 
-## We really just need to understand these ranges. Th 10 network is a class A network. The 172.16 Network is Class B, therefore we know highest static bits must be binary ```10``` (128). The RFC tells us 12 bits are for network addresses, since we are starting at 172, our first byte is ```10101100```. That start of the second byte is ```00010000``` (the 1 is the 12th bit in the second byte ```10101100.00010000```) which has a decimal value of 16 (172.16), the maximum value for the second byte is ```00011111``` or decimal 31, or 172.31 (```10101100.00011111```). The 192.168 address space has 2 bytes available for hosts.
+## We really just need to understand these ranges. Th 10 network is a class A network. The 172.16 Network is Class B, therefore we know highest static bits must be binary ```10``` (128). The RFC tells us 12 bits are for network addresses, since we are starting at 172, our first byte is ```10101100```. That start of the second byte is ```00010000``` (the 1 is the 12th of 32 bits in the second byte ```10101100.00010000```) which has a decimal value of 16 (172.16), the maximum value for the second byte is ```00011111``` or decimal 31, or 172.31 (```10101100.00011111```). The 192.168 address space has 2 bytes available for hosts.
 
 ## Don't overthink private address ranges, just know they exist, they don't hit the internet, and recognize them when you see them.  
 
