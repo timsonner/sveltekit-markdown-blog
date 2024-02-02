@@ -1,6 +1,6 @@
 ---
 title: 'IPv4 Deep Dive'
-description: "A slightly on the spectrum look at IPv4 addresing and classes"
+description: 'A slightly on the spectrum look at IPv4 addresing and classes'
 author: 'Tim Sonner'
 date: '2024-01-31'
 hero: '/ipv4-deepdive/ipv4-deepdive-hero.jpg'
@@ -114,9 +114,9 @@ func convertToBinary(number int) string {
 
 ## Scrolling back up to RFC 970 screenshots confirms this. Class A is indeed 0 to 127 or ```00000000``` to ```011111111```. Lets take a look at Class B from RFC 796, we know that the highest 2 bits need to start with ```10``` and we have a total of 16 bits available for network section. The lowest possible first byte value should be ```10000000``` and the highest value should be ```10111111```. I can tell you just by looking that the lowest first byte value is 128 and the highest value of the first byte should be 255 - 64, because the 64 score is the only 0 in ```10111111```. That gives us 191. Lets scroll up and see if I'm correct. So we have 128.0.x.x for the lowest and 191.255.x.x for the highest in Class B. Lets do Class C... ```110``` is the static bit requirement, so ```11000000``` (128 + 64) is our lowest and ```11011111``` (255 - 32) is the highest for the first byte. Lowest first byte: 192, highest first byte: 223. Scrolling up to check our work...  
 
-## Class D. Deez Nutz. Ha. Got eem! Seriously tho, stop messing around, this is when we get into an important topic called Multicasting... Class D starts with the first 4 static bits ```1110```. The RFC for Multicast is RFC 3171 (https://datatracker.ietf.org/doc/html/rfc3171), we can see that we have an expected range of 224.0.0.0 to 239.255.255.255, lets test this out... The lowest first byte value will be ```11100000``` (224) and the highest first byte value will be ```11101111``` (239). Sweet! So our calculations make sense, what the hell is Multicast?  
+## Class D. Deez Nutz. Ha. Got eem! Seriously tho, stop messing around, this is when we get into an important topic called Multicasting... Class D starts with the first 4 static bits ```1110```. The RFC for Multicast is RFC 3171 https://datatracker.ietf.org/doc/html/rfc3171 we can see that we have an expected range of 224.0.0.0 to 239.255.255.255, lets test this out... The lowest first byte value will be ```11100000``` (224) and the highest first byte value will be ```11101111``` (239). Sweet! So our calculations make sense, what the hell is Multicast?  
 
-## Multicast is kinda like a blog or social media post... You just full send it, you may or may not get feed back from your audience. That same stuff happens on the network. One sees a lot of multicast traffic in WireShark, understanding it helps us "filter" out the noise. <- See what I did there?  
+## Multicast is kinda like a blog or social media post... You just full send it, you may or may not get feed back from your audience. That same stuff happens on the network. One sees a lot of multicast traffic in WireShark, understanding it helps us "filter" out the noise. See what I did there?  
 
 ![](/ipv4-deepdive/wireshark.png)  
 
