@@ -1,28 +1,17 @@
-# Setting up a development or production server
+# SvelteKit app
 
+This directory is the SvelteKit app for the repository. The repository README at the root describes the site, routes, and post format.
 
-## Developing
-
-Once you've cloned the project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Run these commands from this directory:
 
 ```bash
+npm ci
 npm run dev
-```  
-
-<http://localhost:5173>  
-
-# or start the server and open the app in a new browser tab
-```  
 npm run dev -- --open
-```  
-
-## Building
-
-To create a production version:
-
-```bash
 npm run build
+npm run preview
 ```
 
-You can preview the production build with `npm run preview`.  
+`npm run dev` starts Vite on port 5173. `npm run preview` serves the production build on port 4173.
 
+`package.json` defines `dev`, `build`, and `preview` only. There is no test script, so `npm test` fails with `Missing script: "test"`.
